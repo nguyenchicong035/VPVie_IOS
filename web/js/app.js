@@ -2274,9 +2274,9 @@
       if (engine === "ink") {
         // Nhận dạng THEO NÉT (ngoại tuyến): dùng quỹ đạo các nét viết tay trên trang
         statusEl.textContent = "Đang nhận dạng theo nét…";
-        var strokeItems = state.items.filter(function (it) { return it.type === "stroke"; });
+        var strokeItems = state.items.filter(function (it) { return it.type === "stroke" && it.pen !== "hl"; });
         if (!strokeItems.length) throw new Error("Chưa có nét viết tay để nhận dạng.");
-        var ink = window.VPInk.recognizeItems(strokeItems);
+        var ink = window.VPInk.recognizeItems(strokeItems, mode);
         if (mode === "math" && ink.latex) data = { kind: "math", latex: ink.latex, text: "", confidence: null };
         else data = { kind: "text", text: ink.text, latex: "", confidence: null };
       } else if (engine === "tesseract") {
