@@ -1,6 +1,6 @@
 // VPVie PWA service worker. Mọi đường dẫn đều tương đối với scope để hoạt động
 // ở tên miền riêng, thư mục con và GitHub Pages.
-const CACHE_VERSION = "vpvie-ios-v3";
+const CACHE_VERSION = "vpvie-ios-v4";
 const CORE = [
   "./", "./index.html", "./bang.html", "./soanthao.html", "./markdown.html",
   "./htmledit.html", "./bangtinh.html", "./trinhchieu.html", "./pdf.html",
@@ -43,7 +43,7 @@ self.addEventListener("fetch", (event) => {
           if (response.ok) caches.open(CACHE_VERSION).then((cache) => cache.put(request, response.clone()));
           return response;
         })
-        .catch(() => caches.match(request).then((hit) => hit || caches.match(new URL("./index.html", scope))))
+        .catch(() => caches.match(request).then((hit) => hit || caches.match(new URL("./bang.html", scope))))
     );
     return;
   }

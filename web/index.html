@@ -1,30 +1,21 @@
 <!doctype html>
 <html lang="vi"><head>
-<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
-<title>VPVie – Bộ ứng dụng văn phòng tiếng Việt</title>
-<link rel="stylesheet" href="./office.css"/>
-  <link rel="manifest" href="./manifest.webmanifest" />
-  <meta name="theme-color" content="#7a1020" />
-  <meta name="mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="VPVie" />
-  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
-  <link rel="icon" href="./icons/icon-32.png" />
-
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"/>
+<title>VPVie – Bảng dạy học</title>
+<link rel="manifest" href="./manifest.webmanifest" />
+<meta name="theme-color" content="#7a1020" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="VPVie" />
+<link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+<link rel="icon" href="./icons/icon-32.png" />
+<!-- Bản web: vào thẳng Bảng dạy học (bỏ trang giới thiệu/launcher) -->
+<script>location.replace("./bang.html" + location.search + location.hash);</script>
+<meta http-equiv="refresh" content="0; url=./bang.html" />
+<style>html,body{margin:0;height:100%;background:#fff;font-family:'Be Vietnam Pro',system-ui,sans-serif}
+.wrap{display:flex;align-items:center;justify-content:center;height:100%;color:#7a1020;font-weight:600}</style>
 </head><body>
-<div class="appbar"><span class="logo">VP</span><span class="title">VPVie</span><span style="opacity:.85">· Bộ ứng dụng văn phòng tiếng Việt có AI</span></div>
-<div class="home-wrap">
-  <div class="home-head"><h1>Chào mừng đến VPVie</h1><p>Bộ ứng dụng văn phòng tiếng Việt, AI nguồn mở – chọn ứng dụng để bắt đầu.</p></div>
-  <div class="apps">
-    <a class="appcard" href="./bang.html"><span class="badge live">Hoạt động</span><div class="ic">🧑‍🏫</div><h3>Bảng dạy học</h3><p>Vẽ, công thức, đồ thị, hình học, nhận dạng chữ viết tay, câu hỏi…</p></a>
-    <a class="appcard" href="./soanthao.html"><span class="badge live">Hoạt động</span><div class="ic">📝</div><h3>Soạn thảo (Word)</h3><p>Soạn thảo văn bản định dạng, AI hỗ trợ, xuất PDF/HTML.</p></a>
-    <a class="appcard" href="./markdown.html"><span class="badge live">Hoạt động</span><div class="ic">📘</div><h3>Markdown</h3><p>Viết Markdown, xem trước trực tiếp, xuất tệp.</p></a>
-    <a class="appcard" href="./htmledit.html"><span class="badge live">Hoạt động</span><div class="ic">🌐</div><h3>HTML</h3><p>Soạn HTML, xem trước trực tiếp trong trình duyệt.</p></a>
-    <a class="appcard" href="./bangtinh.html"><span class="badge live">Hoạt động</span><div class="ic">📊</div><h3>Bảng tính + Hỏi Excel</h3><p>Bảng tính, công thức, hỏi bằng tiếng Việt → tính tự động.</p></a>
-    <a class="appcard" href="./trinhchieu.html"><span class="badge live">Hoạt động</span><div class="ic">📽️</div><h3>Trình chiếu</h3><p>Soạn slide, tạo slide bằng AI theo chủ đề.</p></a>
-    <a class="appcard" href="./pdf.html"><span class="badge live">Hoạt động</span><div class="ic">📄</div><h3>PDF</h3><p>Xem và ghi chú tài liệu PDF.</p></a>
-  </div>
-</div>
-  <script src="./js/pwa.js"></script>
+<div class="wrap">Đang mở Bảng dạy học… <a href="./bang.html" style="margin-left:8px;color:#7a1020">Bấm vào đây nếu không tự chuyển</a></div>
 </body></html>

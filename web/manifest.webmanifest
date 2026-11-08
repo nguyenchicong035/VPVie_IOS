@@ -5,7 +5,7 @@
   "description": "Bộ công cụ văn phòng, bảng dạy học và toán học tiếng Việt tối ưu cho iPhone và iPad.",
   "lang": "vi",
   "dir": "ltr",
-  "start_url": "./index.html?source=pwa",
+  "start_url": "./bang.html?source=pwa",
   "scope": "./",
   "display": "standalone",
   "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
