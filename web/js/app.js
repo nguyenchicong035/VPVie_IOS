@@ -581,6 +581,7 @@
       s.points = window.VPBeautify.refineInk(s.points, state.tidyStrength || 2);
     }
     state.items.push(s); redraw();
+    if (state.autoRecognize && s.type === "stroke" && s.pen !== "hl" && !isLaser) scheduleAutoRecognize();
   }
   // ----- Lịch sử hoàn tác (chụp toàn bộ items của trang hiện tại)
   var undoStack = [], redoStack = [];
@@ -2263,8 +2264,10 @@
   }
 
   // Nhận dạng (Tesseract miễn phí hoặc máy chủ Ollama/Claude). Kết quả công thức mở ra để sửa trước khi chèn.
+  var aiRunning = false;
   $("btn-ai").onclick = async function () {
     var btn = this; var old = btn.textContent; var statusEl = $("ai-status");
+    if (aiRunning) return; aiRunning = true;
     btn.disabled = true; btn.textContent = "Đang nhận dạng…";
     try {
       var engine = $("ai-engine").value, mode = $("ai-mode").value, data, src = cropForOCR();
@@ -2314,9 +2317,32 @@
       else toast("Đã chuyển chữ viết tay thành chữ đánh máy." + (data.confidence != null ? " (tin cậy " + data.confidence + "%)" : ""));
     } catch (e) {
       statusEl.textContent = "";
-      toast(e.message || "Lỗi nhận dạng.");
-    } finally { btn.disabled = false; btn.textContent = old; }
+      if (!this._auto) toast(e.message || "Lỗi nhận dạng.");
+    } finally { btn.disabled = false; btn.textContent = old; aiRunning = false; }
   };
+  // ===== Tự nhận dạng ngay sau khi viết xong =====
+  var autoRecogTimer = 0;
+  if ($("ai-auto")) {
+    try { state.autoRecognize = localStorage.getItem("vpvie.autoRecog") === "1"; $("ai-auto").checked = state.autoRecognize; } catch (e) {}
+    $("ai-auto").onchange = function () {
+      state.autoRecognize = this.checked;
+      try { localStorage.setItem("vpvie.autoRecog", this.checked ? "1" : "0"); } catch (e) {}
+      toast(this.checked ? "⚡ Tự nhận dạng: BẬT (viết xong, ngừng tay là tự nhận dạng)." : "Tự nhận dạng: TẮT.");
+    };
+  }
+  function scheduleAutoRecognize() {
+    if (!state.autoRecognize) return;
+    if (autoRecogTimer) clearTimeout(autoRecogTimer);
+    autoRecogTimer = setTimeout(function () {
+      autoRecogTimer = 0;
+      if (aiRunning) { scheduleAutoRecognize(); return; }               // đang bận → chờ thêm
+      if (state.tool !== "pen" || state.drawing) return;                 // đang vẽ tiếp thì thôi
+      if (!state.items.some(function (it) { return it.type === "stroke" && it.pen !== "hl"; })) return;
+      var b = $("btn-ai"); if (!b || b.disabled) return;
+      b._auto = true;                                                    // chạy im lặng, không báo lỗi ồn ào
+      Promise.resolve(b.onclick.call(b)).catch(function () {}).then(function () { b._auto = false; });
+    }, 1100);
+  }
 
   // ----- Dạy nét chữ (stroke-based): ô viết nhỏ, học mẫu của người dùng
   (function setupInkTrainer() {
