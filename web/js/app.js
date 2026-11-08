@@ -1195,6 +1195,15 @@
     document.querySelectorAll("#app-menu [data-theme]").forEach(function (b) { b.classList.toggle("on", b.dataset.theme === t); });
   }
   (function () { var t = "light"; try { t = localStorage.getItem("vpvie.theme") || "light"; } catch (e) {} applyTheme(t); })();
+  function setSheetBar(hide) {
+    var s = document.querySelector(".nr-sheets"), btn = $("sheet-show"); if (!s) return;
+    s.classList.toggle("hidden", hide);
+    if (btn) btn.hidden = !hide;
+    try { localStorage.setItem("vpvie.hideSheets", hide ? "1" : "0"); } catch (e) {}
+  }
+  if ($("sheet-hide")) $("sheet-hide").onclick = function (e) { e.stopPropagation(); setSheetBar(true); toast("Đã ẩn thanh Sheet."); };
+  if ($("sheet-show")) $("sheet-show").onclick = function (e) { e.stopPropagation(); setSheetBar(false); };
+  (function () { try { if (localStorage.getItem("vpvie.hideSheets") === "1") setSheetBar(true); } catch (e) {} })();
   var AM = {
     library: function () { openLibrary(); },
     "new": newBook,
@@ -1222,6 +1231,7 @@
     addpage: function () { addPage(); },
     delpage: function () { delPage(); },
     toolbar: function () { document.querySelectorAll(".nr-row-tools, .nr-row-tools2").forEach(function (r) { r.classList.toggle("hidden"); }); },
+    sheetbar: function () { var s = document.querySelector(".nr-sheets"); setSheetBar(!(s && s.classList.contains("hidden"))); },
     license: function () { if ($("btn-license")) $("btn-license").click(); },
     update: function () {
       if (window.VPDesktop && window.VPDesktop.isApp && window.VPDesktop.checkUpdate) {
