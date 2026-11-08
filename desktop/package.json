@@ -1,0 +1,83 @@
+{
+  "name": "vpvie-desktop",
+  "productName": "VPVie",
+  "version": "1.0.0",
+  "description": "VPVie – Bảng dạy học & bộ văn phòng tiếng Việt (ứng dụng máy tính)",
+  "author": "Nguyen Chi Cong <nguyenchicong035@gmail.com>",
+  "license": "MIT",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder",
+    "dist:win": "electron-builder --win nsis msi",
+    "dist:dir": "electron-builder --dir"
+  },
+  "devDependencies": {
+    "electron": "^33.2.1",
+    "electron-builder": "25.1.8"
+  },
+  "build": {
+    "appId": "vn.vpvie.app",
+    "productName": "VPVie",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "static-server.js",
+      "build/**"
+    ],
+    "extraResources": [
+      {
+        "from": "../web",
+        "to": "web"
+      },
+      {
+        "from": "../vpvie",
+        "to": "vpvie"
+      },
+      {
+        "from": "../run.py",
+        "to": "run.py"
+      },
+      {
+        "from": "../requirements.txt",
+        "to": "requirements.txt"
+      }
+    ],
+    "win": {
+      "target": [
+        "nsis",
+        "msi"
+      ],
+      "icon": "build/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "VPVie",
+      "installerLanguages": [
+        "vi_VN",
+        "en_US"
+      ]
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ],
+      "category": "Education",
+      "icon": "build/icon.png"
+    },
+    "mac": {
+      "target": [
+        "dmg"
+      ],
+      "category": "public.app-category.education",
+      "icon": "build/icon.png"
+    }
+  }
+}

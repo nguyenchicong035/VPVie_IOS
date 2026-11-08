@@ -1,0 +1,31 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>VPVie – Trình chiếu</title><link rel="stylesheet" href="./office.css"/><link rel="manifest" href="./manifest.webmanifest"/><meta name="theme-color" content="#7a1020"/><meta name="apple-mobile-web-app-capable" content="yes"/><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/><meta name="apple-mobile-web-app-title" content="VPVie"/><link rel="apple-touch-icon" href="./icons/apple-touch-icon.png"/></head>
+<body class="app">
+<div class="appbar"><span class="logo">VP</span><a class="home" href="./">← Trang chủ</a><span class="title">Trình chiếu</span><span class="spacer"></span><span id="pos" style="font-size:12px;opacity:.85"></span></div>
+<div class="obar">
+  <button class="obtn primary" id="ai-slides">🤖 Tạo slide bằng AI</button>
+  <span class="sep"></span>
+  <button class="obtn" id="present">▶ Trình chiếu</button>
+  <button class="obtn" id="pdf">📄 Xuất PDF</button>
+  <button class="obtn" id="del-slide">🗑 Xóa slide</button>
+</div>
+<div class="slides-app">
+  <div class="thumb-col"><div class="thumbs" id="thumbs"></div><button class="obtn add-slide" id="add-slide">＋ Thêm slide</button></div>
+  <div class="stage"><div class="slide-edit" id="slide"></div></div>
+</div>
+<div id="present-overlay" class="present-overlay"><div class="present-slide" id="present-slide"></div><div class="present-hint">← → chuyển slide · bấm để sang slide · Esc để thoát</div></div>
+<div id="print-all" class="print-all"></div>
+<div id="dlg-ai" class="dlg">
+  <div class="dlg-card">
+    <div class="dlg-head">Tạo slide bằng AI</div>
+    <label class="lbl">Chủ đề bài giảng</label>
+    <input id="ai-topic" class="in" placeholder="vd: Hàm số bậc hai và đồ thị parabol"/>
+    <div style="margin-top:8px"><label class="lbl">Số slide</label> <input id="ai-n" type="number" min="3" max="15" value="6" style="width:70px"/></div>
+    <div class="hint">AI tự lên dàn ý và từng slide theo phong cách thống nhất. Cần bật AI (Ollama miễn phí hoặc Claude).</div>
+    <div class="dlg-foot"><button id="ai-cancel" class="btn ghost">Hủy</button><button id="ai-gen" class="btn">Tạo slide</button></div>
+  </div>
+</div>
+<script src="./js/office-slides.js"></script>
+  <script src="./js/pwa.js"></script>
+</body></html>

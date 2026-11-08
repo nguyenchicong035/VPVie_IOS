@@ -1,0 +1,22 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>VPVie – PDF</title><link rel="stylesheet" href="./office.css"/><link rel="manifest" href="./manifest.webmanifest"/><meta name="theme-color" content="#7a1020"/><meta name="apple-mobile-web-app-capable" content="yes"/><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/><meta name="apple-mobile-web-app-title" content="VPVie"/><link rel="apple-touch-icon" href="./icons/apple-touch-icon.png"/></head>
+<body class="app">
+<div class="appbar"><span class="logo">VP</span><a class="home" href="./">← Trang chủ</a><span class="title">Xem & ghi chú PDF</span></div>
+<div class="obar">
+  <button class="obtn primary" id="open">📂 Mở PDF</button>
+  <input id="pdf-file" type="file" accept="application/pdf" hidden>
+  <span class="sep"></span>
+  <button class="obtn" id="zoom-out">−</button><span id="zoom-lv" class="lbl">100%</span><button class="obtn" id="zoom-in">+</button>
+  <span class="sep"></span>
+  <button class="obtn" id="pen">✏️ Bút ghi chú</button>
+  <input type="color" id="pen-color" value="#d9473a" style="width:30px;height:30px;padding:0;border:1px solid var(--line);border-radius:6px">
+  <button class="obtn" id="clear-annot">🧽 Xóa ghi chú</button>
+  <button class="obtn" id="print">🖨 In / PDF</button>
+  <span id="pdf-note" style="color:var(--muted);font-size:12px"></span>
+</div>
+<div class="pdf-viewer" id="viewer"><div class="pdf-empty">📄 Mở một tệp PDF để xem và ghi chú lên tài liệu.</div></div>
+<script src="./vendor/pdfjs/pdf.min.js"></script>
+<script src="./js/office-pdf.js"></script>
+  <script src="./js/pwa.js"></script>
+</body></html>

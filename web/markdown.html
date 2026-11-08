@@ -1,0 +1,22 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>VPVie – Markdown</title><link rel="stylesheet" href="./office.css"/><link rel="manifest" href="./manifest.webmanifest"/><meta name="theme-color" content="#7a1020"/><meta name="apple-mobile-web-app-capable" content="yes"/><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/><meta name="apple-mobile-web-app-title" content="VPVie"/><link rel="apple-touch-icon" href="./icons/apple-touch-icon.png"/></head>
+<body class="app">
+<div class="appbar"><span class="logo">VP</span><a class="home" href="./">← Trang chủ</a><span class="title">Markdown</span><span class="spacer"></span><span id="save-note" style="font-size:12px;opacity:.85"></span></div>
+<div class="obar">
+  <button class="obtn primary" id="ai-btn">🤖 AI hỗ trợ</button>
+  <span class="sep"></span>
+  <button class="obtn" id="dl">⬇ Tải .md</button>
+  <button class="obtn" id="pdf">📄 PDF</button>
+  <span style="color:var(--muted);font-size:12px">Gõ Markdown bên trái, xem trước bên phải</span>
+</div>
+<div class="editor-split"><textarea id="src" placeholder="# Tiêu đề&#10;&#10;Nội dung **Markdown**…"></textarea><div id="prev" class="preview md"></div></div>
+<div class="statusbar"><span id="wc">0 từ</span><span>VPVie · Markdown</span></div>
+<div id="ai-menu" class="ai-menu">
+  <button data-task="continue">✍️ Viết tiếp</button><button data-task="rewrite">🔁 Viết lại</button>
+  <button data-task="summarize">📝 Tóm tắt</button><button data-task="fix">✅ Sửa chính tả</button>
+  <button data-task="translate_en">🌐 Dịch sang tiếng Anh</button>
+</div>
+<script src="./vendor/marked.min.js"></script><script src="./js/office-md.js"></script>
+  <script src="./js/pwa.js"></script>
+</body></html>

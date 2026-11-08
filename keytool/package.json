@@ -1,0 +1,25 @@
+{
+  "name": "vpvie-keytool",
+  "productName": "VPVie Key Tool",
+  "version": "1.0.0",
+  "description": "Trình cấp key bản quyền VPVie (ứng dụng độc lập cho người phát hành)",
+  "author": "Nguyen Chi Cong <nguyenchicong035@gmail.com>",
+  "license": "MIT",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist:win": "electron-builder --win nsis",
+    "dist": "electron-builder"
+  },
+  "devDependencies": { "electron": "33.2.1", "electron-builder": "25.1.8" },
+  "build": {
+    "appId": "vn.vpvie.keytool",
+    "productName": "VPVie Key Tool",
+    "directories": { "output": "dist", "buildResources": "build" },
+    "files": ["main.js", "preload.js", "index.html", "build/**"],
+    "win": { "target": ["nsis"], "icon": "build/icon.ico" },
+    "nsis": { "oneClick": false, "allowToChangeInstallationDirectory": true, "createDesktopShortcut": true, "shortcutName": "VPVie Key Tool" },
+    "linux": { "target": ["AppImage"], "category": "Utility", "icon": "build/icon.png" },
+    "mac": { "target": ["dmg"], "icon": "build/icon.png" }
+  }
+}

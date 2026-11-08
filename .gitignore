@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+dist/
+.DS_Store
+activations.json
+revoked.json

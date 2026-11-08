@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>VPVie – Quản lý bản quyền</title>
+<style>
+  :root{--maroon:#7a1020;--ink:#1f2328;--line:#e2e6ea;--ok:#1a7f37}
+  *{box-sizing:border-box}
+  body{font:15px/1.55 system-ui,Segoe UI,Arial;margin:0;background:#f6f7f9;color:var(--ink)}
+  header{background:var(--maroon);color:#fff;padding:14px 22px;font-weight:700;font-size:18px}
+  .wrap{max-width:960px;margin:22px auto;padding:0 16px;display:grid;gap:18px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px 22px;box-shadow:0 6px 22px rgba(0,0,0,.05)}
+  h2{font-size:17px;margin:0 0 12px}
+  label{display:block;font-weight:600;margin:10px 0 4px;font-size:14px}
+  input,textarea,select{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:9px;font:inherit}
+  textarea{min-height:60px;font-family:ui-monospace,monospace;font-size:12px}
+  .row{display:flex;gap:12px;flex-wrap:wrap}.row>div{flex:1;min-width:140px}
+  button{background:var(--maroon);color:#fff;border:none;padding:10px 16px;border-radius:9px;font-weight:700;cursor:pointer;font-size:14px}
+  button.ghost{background:#eef1f4;color:var(--ink)}
+  button.sm{padding:6px 10px;font-size:13px}
+  button.danger{background:#fff;color:var(--maroon);border:1px solid #e9c3ca}
+  .out{margin-top:12px;padding:10px 12px;border-radius:9px;background:#f6f7f9;border:1px solid var(--line);font-family:ui-monospace,monospace;font-size:12px;word-break:break-all;min-height:18px}
+  .ok{color:var(--ok)}.err{color:var(--maroon)}
+  table{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}
+  th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:#6b7280;font-size:12px;text-transform:uppercase;letter-spacing:.3px}
+  .mid{font-family:ui-monospace,monospace;font-size:12px}
+  .pill{display:inline-block;background:#eef1f4;border-radius:12px;padding:1px 9px;font-size:12px;margin:2px 4px 2px 0}
+  .note{font-size:12px;color:#6b7280;margin-top:10px}
+  .tabs{display:flex;gap:8px;margin-bottom:6px}
+  .tabs button{background:#eef1f4;color:var(--ink)}
+  .tabs button.on{background:var(--maroon);color:#fff}
+  .hidden{display:none}
+  .keylog{max-height:240px;overflow:auto}
+  code{background:#f0f2f4;padding:1px 5px;border-radius:5px}
+</style>
+</head>
+<body>
+<header>🔑 VPVie – Quản lý bản quyền <span style="font-weight:400;font-size:13px;opacity:.85">(dành cho người phát hành)</span></header>
+<div class="wrap">
+
+  <!-- CẤP KEY -->
+  <div class="card">
+    <h2>① Cấp key</h2>
+    <label>Khoá riêng (nội dung <code>private-key.b64</code>)</label>
+    <textarea id="priv" placeholder="Dán nội dung private-key.b64, hoặc chọn tệp"></textarea>
+    <input type="file" id="privfile" accept=".b64,.txt" style="margin-top:6px;border:none;padding:4px 0"/>
+    <div class="tabs" style="margin-top:12px">
+      <button class="on" data-kt="single">Gắn 1 máy</button>
+      <button data-kt="multi">Nhiều máy (qua máy chủ)</button>
+    </div>
+    <div class="row">
+      <div id="mid-wrap"><label>Mã máy (người dùng gửi)</label><input id="mid" placeholder="VPV-XXXX-XXXX-XXXX" style="text-transform:uppercase"/></div>
+      <div id="max-wrap" class="hidden"><label>Số máy tối đa</label><input id="maxm" type="number" value="5" min="1"/></div>
+      <div><label>Gói</label><input id="plan" value="pro"/></div>
+      <div><label>Số ngày (0 = vĩnh viễn)</label><input id="days" type="number" value="365" min="0"/></div>
+    </div>
+    <label>Ghi chú</label><input id="note" placeholder="VD: Cô Lan - THPT A"/>
+    <div style="margin-top:12px"><button id="gen">Cấp key</button> <button id="copy" class="ghost">⧉ Chép key</button></div>
+    <div class="out" id="out"></div>
+    <div class="note">Key đã cấp được lưu nhật ký trong trình duyệt này (cột ③).</div>
+  </div>
+
+  <!-- NHẬT KÝ KEY ĐÃ CẤP -->
+  <div class="card">
+    <h2>② Nhật ký key đã cấp <button id="clearlog" class="ghost sm" style="float:right">Xoá nhật ký</button></h2>
+    <div class="keylog"><table id="logtbl"><thead><tr><th>Thời gian</th><th>Loại</th><th>Mã máy / ID</th><th>Ghi chú</th><th>Hạn</th><th></th></tr></thead><tbody></tbody></table></div>
+    <div class="note" id="logempty">Chưa cấp key nào.</div>
+  </div>
+
+  <!-- QUẢN LÝ KÍCH HOẠT (server) -->
+  <div class="card">
+    <h2>③ Quản lý kích hoạt (máy chủ)</h2>
+    <div class="row">
+      <div style="flex:2"><label>Địa chỉ máy chủ</label><input id="srv" value="" placeholder="http://127.0.0.1:8011 (để trống = cùng máy chủ đang mở trang)"/></div>
+      <div><label>Token quản trị</label><input id="token" type="password" placeholder="VPVIE_ADMIN_TOKEN"/></div>
+    </div>
+    <div style="margin-top:12px"><button id="load">Tải danh sách</button></div>
+    <div class="out" id="adminmsg"></div>
+    <div id="acttables"></div>
+    <div class="note">Cần đặt <code>VPVIE_ADMIN_TOKEN</code> khi chạy máy chủ để bật mục này. Key nhiều máy mới có kích hoạt lưu trên máy chủ.</div>
+  </div>
+</div>
+
+<script>
+var $=function(id){return document.getElementById(id)};
+function b64uToBytes(s){s=s.replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';var b=atob(s),a=new Uint8Array(b.length);for(var i=0;i<b.length;i++)a[i]=b.charCodeAt(i);return a}
+function b64ToBytes(s){s=s.trim();var b=atob(s),a=new Uint8Array(b.length);for(var i=0;i<b.length;i++)a[i]=b.charCodeAt(i);return a}
+function bytesToB64u(a){var s='';for(var i=0;i<a.length;i++)s+=String.fromCharCode(a[i]);return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')}
+function uuid(){return (crypto.randomUUID?crypto.randomUUID():(Date.now()+''+Math.random())).replace(/-/g,'').slice(0,16)}
+
+// ----- Cấp key -----
+var KT='single';
+document.querySelectorAll('.tabs button[data-kt]').forEach(function(b){b.onclick=function(){KT=b.dataset.kt;document.querySelectorAll('.tabs button[data-kt]').forEach(function(x){x.classList.toggle('on',x===b)});$('mid-wrap').classList.toggle('hidden',KT!=='single');$('max-wrap').classList.toggle('hidden',KT!=='multi');}});
+$('privfile').onchange=function(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){$('priv').value=r.result.trim()};r.readAsText(f)};
+async function importPriv(b64){return crypto.subtle.importKey('pkcs8',b64ToBytes(b64),{name:'ECDSA',namedCurve:'P-256'},false,['sign']);}
+async function sign(priv,payload){var p=new TextEncoder().encode(JSON.stringify(payload));var s=new Uint8Array(await crypto.subtle.sign({name:'ECDSA',hash:'SHA-256'},priv,p));return 'VPL1.'+bytesToB64u(p)+'.'+bytesToB64u(s);}
+var LOG='vpvie.keylog';
+function loadLog(){try{return JSON.parse(localStorage.getItem(LOG)||'[]')}catch(e){return[]}}
+function saveLog(l){try{localStorage.setItem(LOG,JSON.stringify(l))}catch(e){}}
+function addLog(entry){var l=loadLog();l.unshift(entry);saveLog(l);renderLog();}
+function renderLog(){
+  var l=loadLog(),tb=$('logtbl').querySelector('tbody');tb.innerHTML='';
+  $('logempty').style.display=l.length?'none':'';
+  l.forEach(function(e){
+    var tr=document.createElement('tr');
+    var exp=e.e?new Date(e.e*1000).toLocaleDateString('vi-VN'):'vĩnh viễn';
+    tr.innerHTML='<td>'+new Date(e.t).toLocaleString('vi-VN')+'</td><td>'+(e.kind==='multi'?('nhiều máy ('+e.maxm+')'):'1 máy')+'</td><td class="mid">'+(e.mid||e.id||'')+'</td><td>'+(e.note||'')+'</td><td>'+exp+'</td>';
+    var td=document.createElement('td');var btn=document.createElement('button');btn.className='ghost sm';btn.textContent='⧉ key';btn.onclick=function(){navigator.clipboard&&navigator.clipboard.writeText(e.key);btn.textContent='✓';};td.appendChild(btn);tr.appendChild(td);
+    tb.appendChild(tr);
+  });
+}
+$('clearlog').onclick=function(){if(confirm('Xoá nhật ký key đã cấp trên trình duyệt này?')){saveLog([]);renderLog();}};
+$('gen').onclick=async function(){
+  var out=$('out');out.className='out';
+  try{
+    var priv=$('priv').value.trim();if(!priv)throw new Error('Thiếu khoá riêng.');
+    var key,pk=await importPriv(priv),plan=$('plan').value.trim()||'pro',days=parseInt($('days').value,10)||0,note=$('note').value.trim();
+    var e=days>0?Math.floor(Date.now()/1000)+days*86400:0, entry={t:Date.now(),kind:KT,plan:plan,e:e,note:note};
+    if(KT==='single'){
+      var mid=$('mid').value.trim().toUpperCase();
+      if(!/^VPV-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(mid))throw new Error('Mã máy sai định dạng.');
+      var payload={m:mid,p:plan,e:e};if(note)payload.n=note;key=await sign(pk,payload);entry.mid=mid;
+    }else{
+      var maxm=parseInt($('maxm').value,10)||1, id=uuid();
+      var payload2={id:id,p:plan,e:e,maxm:maxm};if(note)payload2.n=note;key=await sign(pk,payload2);entry.id=id;entry.maxm=maxm;
+    }
+    entry.key=key;out.className='out ok';out.textContent=key;out.dataset.key=key;addLog(entry);
+  }catch(err){out.className='out err';out.textContent='Lỗi: '+err.message}
+};
+$('copy').onclick=function(){var k=$('out').dataset.key;if(k){navigator.clipboard&&navigator.clipboard.writeText(k);$('copy').textContent='✓ Đã chép';}};
+
+// ----- Quản lý kích hoạt (server) -----
+function api(path,opts){opts=opts||{};opts.headers=Object.assign({'X-Admin-Token':$('token').value,'Content-Type':'application/json'},opts.headers||{});return fetch(($('srv').value.trim())+path,opts);}
+$('load').onclick=async function(){
+  var msg=$('adminmsg');msg.className='out';msg.textContent='Đang tải…';
+  try{
+    var res=await api('/api/admin/activations');var d=await res.json();
+    if(!res.ok||!d.ok)throw new Error(d.error||('Lỗi '+res.status));
+    msg.className='out ok';msg.textContent='Đã tải.';renderAct(d);
+  }catch(e){msg.className='out err';msg.textContent='Lỗi: '+e.message;}
+};
+function renderAct(d){
+  var host=$('acttables');host.innerHTML='';
+  var acts=d.activations||{},revoked=d.revoked||[],ids=Object.keys(acts);
+  if(!ids.length){host.innerHTML='<div class="note">Chưa có kích hoạt nào (chỉ key nhiều máy mới lưu ở đây).</div>';}
+  var tbl=document.createElement('table');
+  tbl.innerHTML='<thead><tr><th>License ID</th><th>Ghi chú</th><th>Số máy</th><th>Các máy đã kích hoạt</th><th>Thu hồi</th></tr></thead>';
+  var tb=document.createElement('tbody');
+  ids.forEach(function(id){
+    var rec=acts[id],tr=document.createElement('tr'),isRev=revoked.indexOf(id)>=0;
+    var machinesTd=document.createElement('td');
+    (rec.machines||[]).forEach(function(m){
+      var sp=document.createElement('span');sp.className='pill';sp.innerHTML=m+' ';
+      var x=document.createElement('button');x.className='danger sm';x.textContent='gỡ';x.style.marginLeft='4px';
+      x.onclick=async function(){if(!confirm('Gỡ máy '+m+' khỏi key?'))return;var r=await (await api('/api/admin/machine-remove',{method:'POST',body:JSON.stringify({lid:id,machine:m})})).json();if(r.ok)$('load').click();else alert(r.reason||'Lỗi');};
+      sp.appendChild(x);machinesTd.appendChild(sp);
+    });
+    if(!(rec.machines||[]).length)machinesTd.innerHTML='<span class="note">(chưa có)</span>';
+    var revTd=document.createElement('td');var rb=document.createElement('button');rb.className=isRev?'ghost sm':'danger sm';rb.textContent=isRev?'bỏ thu hồi':'thu hồi';
+    rb.onclick=async function(){var r=await (await api('/api/admin/revoke',{method:'POST',body:JSON.stringify({key_or_id:id,revoked:!isRev})})).json();if(r.ok)$('load').click();else alert(r.reason||'Lỗi');};
+    revTd.appendChild(rb);
+    tr.innerHTML='<td class="mid">'+id+(isRev?' <span class="pill" style="background:#fbeef0;color:#7a1020">đã thu hồi</span>':'')+'</td><td>'+(rec.note||'')+'</td><td>'+((rec.machines||[]).length)+'</td>';
+    tr.appendChild(machinesTd);tr.appendChild(revTd);tb.appendChild(tr);
+  });
+  tbl.appendChild(tb);host.appendChild(tbl);
+}
+renderLog();
+</script>
+</body>
+</html>

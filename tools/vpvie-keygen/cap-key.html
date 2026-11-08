@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>VPVie – Cấp key theo máy (người phát hành)</title>
+<style>
+  :root{--maroon:#7a1020;--ink:#1f2328;--line:#e2e6ea}
+  *{box-sizing:border-box}
+  body{font:15px/1.5 system-ui,Segoe UI,Arial;margin:0;background:#f6f7f9;color:var(--ink)}
+  .wrap{max-width:720px;margin:28px auto;background:#fff;border:1px solid var(--line);border-radius:14px;padding:22px 24px;box-shadow:0 8px 28px rgba(0,0,0,.06)}
+  h1{font-size:20px;margin:0 0 4px}.sub{color:#6b7280;margin:0 0 18px;font-size:13px}
+  label{display:block;font-weight:600;margin:14px 0 5px}
+  input,textarea{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:9px;font:inherit}
+  textarea{min-height:70px;font-family:ui-monospace,monospace;font-size:12px}
+  .row{display:flex;gap:12px}.row>div{flex:1}
+  button{margin-top:16px;background:var(--maroon);color:#fff;border:none;padding:11px 18px;border-radius:9px;font-weight:700;cursor:pointer;font-size:15px}
+  button.ghost{background:#eef1f4;color:var(--ink)}
+  .out{margin-top:16px;padding:12px;border-radius:10px;background:#f6f7f9;border:1px solid var(--line);font-family:ui-monospace,monospace;font-size:12px;word-break:break-all;min-height:20px}
+  .ok{color:#1a7f37}.err{color:var(--maroon)}
+  .note{font-size:12px;color:#6b7280;margin-top:14px;border-top:1px solid var(--line);padding-top:12px}
+  .flex{display:flex;gap:10px;align-items:flex-end}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🔑 Cấp key kích hoạt theo máy</h1>
+  <p class="sub">Dành cho NGƯỜI PHÁT HÀNH. Chạy hoàn toàn trong trình duyệt (ngoại tuyến). Không gửi khoá riêng đi đâu.</p>
+
+  <label>Khoá riêng (nội dung tệp <code>private-key.b64</code>)</label>
+  <textarea id="priv" placeholder="Dán nội dung private-key.b64, hoặc chọn tệp bên dưới"></textarea>
+  <div class="flex"><input type="file" id="privfile" accept=".b64,.txt"/></div>
+
+  <div class="row">
+    <div><label>Mã máy (do người dùng gửi)</label><input id="mid" placeholder="VPV-XXXX-XXXX-XXXX" style="text-transform:uppercase"/></div>
+    <div><label>Gói</label><input id="plan" value="pro"/></div>
+  </div>
+  <div class="row">
+    <div><label>Số ngày hiệu lực (0 = vĩnh viễn)</label><input id="days" type="number" value="0" min="0"/></div>
+    <div><label>Ghi chú (tuỳ chọn)</label><input id="note" placeholder="VD: Cô Lan - THPT A"/></div>
+  </div>
+
+  <button id="gen">Cấp key</button>
+  <button id="copy" class="ghost">⧉ Chép key</button>
+  <div class="out" id="out"></div>
+
+  <div class="note">
+    Chưa có khoá? Tạo bằng dòng lệnh: <code>node keygen.js genkeys</code> rồi dán khoá công khai vào
+    <code>web/js/license.js</code>. Giữ bí mật <code>private-key.b64</code>.
+  </div>
+</div>
+<script>
+var $=function(id){return document.getElementById(id)};
+function b64uToBytes(s){s=s.replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';var b=atob(s),a=new Uint8Array(b.length);for(var i=0;i<b.length;i++)a[i]=b.charCodeAt(i);return a}
+function b64ToBytes(s){s=s.trim();var b=atob(s),a=new Uint8Array(b.length);for(var i=0;i<b.length;i++)a[i]=b.charCodeAt(i);return a}
+function bytesToB64u(a){var s='';for(var i=0;i<a.length;i++)s+=String.fromCharCode(a[i]);return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')}
+$('privfile').onchange=function(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){$('priv').value=r.result.trim()};r.readAsText(f)};
+async function importPriv(b64){
+  return crypto.subtle.importKey('pkcs8', b64ToBytes(b64), {name:'ECDSA',namedCurve:'P-256'}, false, ['sign']);
+}
+$('gen').onclick=async function(){
+  var out=$('out');out.className='out';
+  try{
+    var priv=$('priv').value.trim();if(!priv)throw new Error('Thiếu khoá riêng.');
+    var mid=$('mid').value.trim().toUpperCase();
+    if(!/^VPV-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(mid))throw new Error('Mã máy sai định dạng (VPV-XXXX-XXXX-XXXX).');
+    var days=parseInt($('days').value,10)||0;
+    var payload={m:mid,p:$('plan').value.trim()||'pro',e:days>0?Math.floor(Date.now()/1000)+days*86400:0};
+    var note=$('note').value.trim();if(note)payload.n=note;
+    var pbytes=new TextEncoder().encode(JSON.stringify(payload));
+    var key=await importPriv(priv);
+    var sig=new Uint8Array(await crypto.subtle.sign({name:'ECDSA',hash:'SHA-256'},key,pbytes));
+    var lic='VPL1.'+bytesToB64u(pbytes)+'.'+bytesToB64u(sig);
+    out.className='out ok';out.textContent=lic;out.dataset.key=lic;
+  }catch(e){out.className='out err';out.textContent='Lỗi: '+e.message}
+};
+$('copy').onclick=function(){var k=$('out').dataset.key;if(!k)return;navigator.clipboard&&navigator.clipboard.writeText(k);$('copy').textContent='✓ Đã chép'};
+</script>
+</body>
+</html>

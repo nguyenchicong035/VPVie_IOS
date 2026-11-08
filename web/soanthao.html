@@ -1,0 +1,57 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>VPVie – Soạn thảo</title><link rel="stylesheet" href="./vendor/katex/katex.min.css"/><link rel="stylesheet" href="./office.css"/><link rel="manifest" href="./manifest.webmanifest"/><meta name="theme-color" content="#7a1020"/><meta name="apple-mobile-web-app-capable" content="yes"/><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/><meta name="apple-mobile-web-app-title" content="VPVie"/><link rel="apple-touch-icon" href="./icons/apple-touch-icon.png"/></head>
+<body class="app">
+<div class="appbar"><span class="logo">VP</span><a class="home" href="./">← Trang chủ</a><span class="title">Soạn thảo văn bản</span><span class="spacer"></span><span id="save-note" style="font-size:12px;opacity:.85"></span></div>
+<div class="obar">
+  <select id="block" title="Kiểu đoạn"><option value="P">Thường</option><option value="H1">Tiêu đề 1</option><option value="H2">Tiêu đề 2</option><option value="H3">Tiêu đề 3</option></select>
+  <select id="fsize" title="Cỡ chữ"><option value="3">Cỡ vừa</option><option value="2">Nhỏ</option><option value="4">Lớn</option><option value="5">Rất lớn</option><option value="6">Khổng lồ</option></select>
+  <select id="font" title="Phông chữ"><option value="">Phông mặc định</option><option value="'Times New Roman',serif">Times New Roman</option><option value="Arial,sans-serif">Arial</option><option value="Tahoma">Tahoma</option><option value="Georgia,serif">Georgia</option><option value="'Courier New',monospace">Courier New</option></select>
+  <button class="obtn" data-cmd="bold" title="Đậm"><b>B</b></button>
+  <button class="obtn" data-cmd="italic" title="Nghiêng"><i>I</i></button>
+  <button class="obtn" data-cmd="underline" title="Gạch chân"><u>U</u></button>
+  <button class="obtn" data-cmd="strikeThrough" title="Gạch ngang"><s>S</s></button>
+  <label class="obtn" style="padding:3px 6px">A<input type="color" id="fcolor" style="width:20px;height:20px;border:none;padding:0;background:none;vertical-align:middle"></label>
+  <label class="obtn" style="padding:3px 6px">🖍<input type="color" id="hcolor" value="#fff3a0" style="width:20px;height:20px;border:none;padding:0;background:none;vertical-align:middle"></label>
+  <span class="sep"></span>
+  <button class="obtn" data-cmd="insertUnorderedList" title="Danh sách chấm">•</button>
+  <button class="obtn" data-cmd="insertOrderedList" title="Danh sách số">1.</button>
+  <button class="obtn" data-cmd="justifyLeft" title="Canh trái">⬅</button>
+  <button class="obtn" data-cmd="justifyCenter" title="Canh giữa">↔</button>
+  <button class="obtn" data-cmd="justifyRight" title="Canh phải">➡</button>
+  <span class="sep"></span>
+  <button class="obtn" data-cmd="undo" title="Hoàn tác">↶</button>
+  <button class="obtn" data-cmd="redo" title="Làm lại">↷</button>
+  <button class="obtn" id="link">🔗</button>
+  <button class="obtn" id="table">▦ Bảng</button>
+  <button class="obtn" id="image">🖼 Ảnh</button>
+  <button class="obtn" id="math">∑ Công thức</button>
+  <button class="obtn" data-cmd="insertHorizontalRule" title="Kẻ ngang">— HR</button>
+  <button class="obtn" id="quote" title="Trích dẫn">❝ Trích</button>
+  <button class="obtn" id="find">🔍 Tìm/Thay</button>
+  <button class="obtn" data-cmd="removeFormat" title="Xóa định dạng">✖</button>
+  <span class="sep"></span>
+  <button class="obtn primary" id="ai-btn">🤖 AI hỗ trợ</button>
+  <button class="obtn" id="export-pdf">📄 PDF</button>
+  <button class="obtn" id="export-html">⬇ HTML</button>
+  <input type="file" id="img-file" accept="image/*" hidden>
+</div>
+<div class="sheet-wrap"><div id="doc" class="sheet" contenteditable="true"></div></div>
+<div class="statusbar"><span id="wc">0 từ</span><span>VPVie · Soạn thảo</span></div>
+<div id="ai-menu" class="ai-menu">
+  <button data-task="continue">✍️ Viết tiếp</button>
+  <button data-task="rewrite">🔁 Viết lại</button>
+  <button data-task="summarize">📝 Tóm tắt</button>
+  <button data-task="fix">✅ Sửa chính tả</button>
+  <button data-task="expand">➕ Mở rộng ý</button>
+  <button data-task="translate_en">🌐 Dịch sang tiếng Anh</button>
+</div>
+<div id="find-bar" class="find-bar">
+  <input id="find-q" placeholder="Tìm…"/><input id="find-r" placeholder="Thay bằng…"/>
+  <button class="obtn" id="find-all">Thay tất cả</button><button class="obtn" id="find-close">✕</button>
+  <span id="find-note" style="font-size:12px;color:var(--muted)"></span>
+</div>
+<script src="./vendor/katex/katex.min.js"></script>
+<script src="./js/office-doc.js"></script>
+  <script src="./js/pwa.js"></script>
+</body></html>

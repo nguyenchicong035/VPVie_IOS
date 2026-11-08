@@ -1,0 +1,31 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>VPVie – Bảng tính</title><link rel="stylesheet" href="./office.css"/><link rel="manifest" href="./manifest.webmanifest"/><meta name="theme-color" content="#7a1020"/><meta name="apple-mobile-web-app-capable" content="yes"/><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/><meta name="apple-mobile-web-app-title" content="VPVie"/><link rel="apple-touch-icon" href="./icons/apple-touch-icon.png"/></head>
+<body class="app">
+<div class="appbar"><span class="logo">VP</span><a class="home" href="./">← Trang chủ</a><span class="title">Bảng tính + Hỏi Excel</span></div>
+<div class="obar">
+  <span style="font-family:Consolas,monospace;color:var(--muted)">fx</span>
+  <input id="fx" class="fxbar" placeholder="Nhập dữ liệu hoặc công thức, vd: =SUM(A1:A10)"/>
+  <span class="sep"></span>
+  <button class="obtn" id="row-add">+ Hàng</button>
+  <button class="obtn" id="col-add">+ Cột</button>
+  <button class="obtn" id="csv-in">📥 Nhập CSV</button>
+  <button class="obtn" id="csv-out">📤 Xuất CSV</button>
+  <button class="obtn primary" id="ask-btn">🤖 Hỏi Excel</button>
+  <input id="csv-file" type="file" accept=".csv,text/csv" hidden>
+</div>
+<div class="sheet-area"><div id="grid" class="grid-wrap"></div></div>
+<div id="ask-panel" class="ask-panel">
+  <h4>🤖 Hỏi Excel bằng tiếng Việt</h4>
+  <label>Vùng dữ liệu (tùy chọn)</label>
+  <input id="ask-range" placeholder="vd: A1:F20 — bỏ trống để tự dò"/>
+  <label>Yêu cầu</label>
+  <textarea id="ask-text" placeholder="vd: tính tổng Doanh thu&#10;trung bình Số lượng theo Phòng ban&#10;đếm số dòng"></textarea>
+  <button id="ask-run" class="obtn primary">Tính & ghi kết quả</button>
+  <div id="ask-result" class="ask-result"></div>
+  <div class="ar-note" style="margin-top:14px">Dòng đầu của vùng là tiêu đề cột. Kết quả dùng công thức thật (SUM, AVERAGE, SUMIF…) và được ghi sang bên phải, không sửa dữ liệu gốc.</div>
+</div>
+<script src="./js/sheet-engine.js"></script>
+<script src="./js/office-sheet.js"></script>
+  <script src="./js/pwa.js"></script>
+</body></html>

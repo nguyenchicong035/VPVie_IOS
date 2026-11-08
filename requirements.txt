@@ -1,0 +1,6 @@
+fastapi>=0.115
+uvicorn>=0.30
+pydantic>=2.7
+cryptography>=42.0   # kiểm chữ ký bản quyền (ECDSA P-256) phía máy chủ
+# Tùy chọn: chỉ cần khi dùng nhà cung cấp AI "anthropic" (Claude). Mặc định dùng Ollama (nguồn mở) qua HTTP.
+anthropic>=0.49

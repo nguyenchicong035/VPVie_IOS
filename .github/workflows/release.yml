@@ -1,0 +1,43 @@
+name: Build & Release
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "20" }
+      - name: Đóng gói VPVie (.exe/.msi)
+        working-directory: desktop
+        run: |
+          npm install
+          npm run dist:win
+      - name: Đóng gói Trình cấp key (.exe)
+        working-directory: keytool
+        run: |
+          npm install
+          npm run dist:win
+      - name: Tải sản phẩm lên Actions
+        uses: actions/upload-artifact@v4
+        with:
+          name: VPVie-Windows
+          path: |
+            desktop/dist/*.exe
+            desktop/dist/*.msi
+            keytool/dist/*.exe
+      - name: Tạo GitHub Release (khi đẩy tag)
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            desktop/dist/*.exe
+            desktop/dist/*.msi
+            keytool/dist/*.exe
+          generate_release_notes: true
