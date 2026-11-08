@@ -63,11 +63,11 @@
     if (worker) return worker;
     if (loading) return loading;
     loading = (async function () {
-      await loadScript("./vendor/tesseract/tesseract.min.js");
+      await loadScript("vendor/tesseract/tesseract.min.js");
       var w = await global.Tesseract.createWorker(["vie", "eng"], 1, {
-        workerPath: "./vendor/tesseract/worker.min.js",
-        corePath: "./vendor/tesseract/",
-        langPath: "./vendor/tesseract/lang",
+        workerPath: "vendor/tesseract/worker.min.js",
+        corePath: "vendor/tesseract/",
+        langPath: "vendor/tesseract/lang",
         gzip: false,
         logger: function (m) { if (onStatus && m.status) onStatus(m.status + (m.progress ? " " + Math.round(m.progress * 100) + "%" : "")); },
       });
@@ -83,20 +83,39 @@
   function mathToLatex(t) {
     if (!t) return "";
     var s = t.replace(/\r/g, "").replace(/\n+/g, " ").replace(/\s{2,}/g, " ").trim();
-    s = s.replace(/√\s*([0-9A-Za-zÀ-ỹ]+)/g, "\\sqrt{$1}");   // căn ôm token theo sau
-    s = s.replace(/[√∫∬∮∑∏π∞≤≥≠≈×÷±∓→∂∇∈∉⊂∪∩∅·∘αβγθλμφωΔΩ°]/g, function (c) { return UNI[c] || c; });
+    // căn: √x, sqrt(x), can(x)
+    s = s.replace(/√\s*\(([^)]*)\)/g, "\\sqrt{$1}");
+    s = s.replace(/√\s*([0-9A-Za-zÀ-ỹ]+)/g, "\\sqrt{$1}");
+    s = s.replace(/\b(sqrt|can)\s*\(([^)]*)\)/gi, "\\sqrt{$2}");
+    s = s.replace(/\b(sqrt|can)\s+([0-9A-Za-z]+)/gi, "\\sqrt{$2}");
+    // ký hiệu Unicode
+    s = s.replace(/[√∫∬∮∑∏π∞≤≥≠≈×÷±∓→⇒⇔∂∇∈∉⊂⊆∪∩∅∀∃·∘αβγδθλμσφωΔΩ°]/g, function (c) { return UNI[c] || c; });
+    // toán tử ASCII thường gặp -> LaTeX
+    s = s.replace(/<=/g, " \\le ").replace(/>=/g, " \\ge ").replace(/!=|=\/=/g, " \\ne ")
+         .replace(/\+\/-|\+-/g, " \\pm ").replace(/-\+/g, " \\mp ")
+         .replace(/<=>|<->/g, " \\Leftrightarrow ").replace(/=>/g, " \\Rightarrow ").replace(/->/g, " \\to ")
+         .replace(/\binfty\b|\binfinity\b|\bvo\s*cuc\b/gi, " \\infty ")
+         .replace(/\bintegral\b|\btich\s*phan\b/gi, " \\int ").replace(/\bsum\b|\btong\b/gi, " \\sum ");
+    // tên Hy Lạp gõ chữ
+    s = s.replace(/\b(alpha|beta|gamma|delta|theta|lambda|mu|nu|xi|rho|sigma|tau|phi|chi|psi|omega|pi|Delta|Omega|Sigma|Pi)\b/g, "\\$1 ");
+    // chỉ số trên/dưới Unicode
     s = s.replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹ⁿ⁺⁻]+/g, function (m) { return "^{" + m.split("").map(function (c) { return SUP[c] || c; }).join("") + "}"; });
     s = s.replace(/[₀₁₂₃₄₅₆₇₈₉ₙ]+/g, function (m) { return "_{" + m.split("").map(function (c) { return SUB[c] || c; }).join("") + "}"; });
-    // mũ dạng x^2 hoặc x2 (chữ cái liền số -> số mũ nếu trông như lũy thừa) — thận trọng: chỉ gắn ^ khi đã có dấu ^
-    s = s.replace(/\^\s*([0-9A-Za-z]+)/g, "^{$1}");
-    s = s.replace(/_\s*([0-9A-Za-z]+)/g, "_{$1}");
+    // mũ / chỉ số có dấu ^ _
+    s = s.replace(/\^\s*\(([^)]*)\)/g, "^{$1}").replace(/_\s*\(([^)]*)\)/g, "_{$1}");
+    s = s.replace(/\^\s*([0-9A-Za-z]+)/g, "^{$1}").replace(/_\s*([0-9A-Za-z]+)/g, "_{$1}");
+    // lũy thừa viết tay: chữ thường liền số (x2 -> x^2), tránh HNO3/H2O (chữ hoa) -> giữ nguyên
+    s = s.replace(/\b([a-z])(\d{1,2})\b/g, "$1^{$2}");
+    s = s.replace(/(\))(\d{1,2})\b/g, "$1^{$2}");
     // phân số a/b -> \frac{a}{b}
-    s = s.replace(/([0-9A-Za-z\)\]\}]+)\s*\/\s*([0-9A-Za-z\(\[\{]+)/g, "\\frac{$1}{$2}");
+    s = s.replace(/(\{[^{}]*\}|[0-9A-Za-z\)\]]+)\s*\/\s*(\{[^{}]*\}|[0-9A-Za-z\(\[]+)/g, "\\frac{$1}{$2}");
+    // nhân * -> \cdot (sau phân số để không phá /)
+    s = s.replace(/(?<=[0-9A-Za-z\)\}])\s*\*\s*(?=[0-9A-Za-z\(\\])/g, " \\cdot ");
     // vi phân dx, dy
     s = s.replace(/\bd([xyzt])\b/g, "\\,d$1");
     // tên hàm
     s = s.replace(/\b(sin|cos|tan|cot|sec|csc|log|ln|lim|max|min|exp|arcsin|arccos|arctan)\b/g, "\\$1 ");
-    return s.replace(/\s+/g, " ").trim();
+    return s.replace(/\s+/g, " ").replace(/\s*([_^])\s*/g, "$1").trim();
   }
 
   // Dọn kết quả: bỏ ký tự rác, gộp khoảng trắng, sửa vài nhầm lẫn phổ biến của chữ viết tay
@@ -136,7 +155,7 @@
   }
 
   async function recognizeServer(pngDataUrl, mode) {
-    var res = await fetch("./api/recognize", {
+    var res = await fetch("api/recognize", {
       method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify(Object.assign({ image: pngDataUrl, mode: mode || "auto" }, (window.VPLicense ? window.VPLicense.creds() : {}))),
     });

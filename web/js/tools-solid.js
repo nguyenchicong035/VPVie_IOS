@@ -48,6 +48,47 @@
       ell.push({ cx: cx, cy: cy, rx: s * 0.85, ry: s * 0.85 });                      // đường tròn lớn
       ell.push({ cx: cx, cy: cy, rx: s * 0.85, ry: s * 0.28, a0: 0, a1: Math.PI });   // xích đạo trước
       ell.push({ cx: cx, cy: cy, rx: s * 0.85, ry: s * 0.28, a0: Math.PI, a1: Math.PI * 2, dashed: true });
+    } else if (kind === "lapphuong") {
+      // Hình lập phương: như hình hộp nhưng các mặt vuông
+      var e = s * 0.78, o2 = e * 0.5, p2 = -e * 0.5;
+      var gA = P(cx - e, cy + e), gB = P(cx + e, cy + e), gC = P(cx + e, cy - e), gD = P(cx - e, cy - e);
+      var hA = P(gA[0] + o2, gA[1] + p2), hB = P(gB[0] + o2, gB[1] + p2), hC = P(gC[0] + o2, gC[1] + p2), hD = P(gD[0] + o2, gD[1] + p2);
+      segs.push(seg(gA[0], gA[1], gB[0], gB[1]), seg(gB[0], gB[1], gC[0], gC[1]), seg(gC[0], gC[1], gD[0], gD[1]), seg(gD[0], gD[1], gA[0], gA[1]));
+      segs.push(seg(hB[0], hB[1], hC[0], hC[1]), seg(hC[0], hC[1], hD[0], hD[1]));
+      segs.push(seg(hA[0], hA[1], hB[0], hB[1], true), seg(hA[0], hA[1], hD[0], hD[1], true));
+      segs.push(seg(gB[0], gB[1], hB[0], hB[1]), seg(gC[0], gC[1], hC[0], hC[1]), seg(gD[0], gD[1], hD[0], hD[1]), seg(gA[0], gA[1], hA[0], hA[1], true));
+    } else if (kind === "chop-para" || kind === "chop-para-sa") {
+      // Chóp đáy hình bình hành ABCD, đỉnh S (SA⊥đáy nếu -sa)
+      var qA = P(cx - W, cy + H), qB = P(cx + W * 0.45, cy + H), qC = P(cx + W * 0.45 + ox, cy + H + oy), qD = P(cx - W + ox, cy + H + oy);
+      var qS = (kind === "chop-para-sa") ? P(qA[0], qA[1] - s * 1.25) : P(cx + ox * 0.2, cy - s);
+      segs.push(seg(qA[0], qA[1], qB[0], qB[1]), seg(qB[0], qB[1], qC[0], qC[1]), seg(qC[0], qC[1], qD[0], qD[1], true), seg(qD[0], qD[1], qA[0], qA[1], true));
+      segs.push(seg(qS[0], qS[1], qA[0], qA[1]), seg(qS[0], qS[1], qB[0], qB[1]), seg(qS[0], qS[1], qC[0], qC[1]), seg(qS[0], qS[1], qD[0], qD[1], true));
+      if (kind === "chop-para-sa") { var m = 10; segs.push(seg(qA[0], qA[1] - m, qA[0] + m, qA[1] - m), seg(qA[0] + m, qA[1] - m, qA[0] + m, qA[1])); }  // ký hiệu góc vuông
+      lab("A", qA[0] - 14, qA[1] + 6); lab("B", qB[0] + 6, qB[1] + 6); lab("C", qC[0] + 6, qC[1] + 2); lab("D", qD[0] - 14, qD[1]); lab("S", qS[0] - 4, qS[1] - 6);
+    } else if (kind === "chop-thang") {
+      // Chóp đáy hình thang ABCD
+      var rA = P(cx - W, cy + H), rB = P(cx + W, cy + H), rC = P(cx + W * 0.5 + ox, cy + H + oy), rD = P(cx - W * 0.5 + ox, cy + H + oy);
+      var rS = P(cx + ox * 0.3, cy - s);
+      segs.push(seg(rA[0], rA[1], rB[0], rB[1]), seg(rB[0], rB[1], rC[0], rC[1]), seg(rC[0], rC[1], rD[0], rD[1], true), seg(rD[0], rD[1], rA[0], rA[1], true));
+      segs.push(seg(rS[0], rS[1], rA[0], rA[1]), seg(rS[0], rS[1], rB[0], rB[1]), seg(rS[0], rS[1], rC[0], rC[1]), seg(rS[0], rS[1], rD[0], rD[1], true));
+      lab("A", rA[0] - 14, rA[1] + 6); lab("B", rB[0] + 6, rB[1] + 6); lab("C", rC[0] + 6, rC[1] + 2); lab("D", rD[0] - 12, rD[1]); lab("S", rS[0] - 4, rS[1] - 6);
+    } else if (kind === "chop3-sa") {
+      // Chóp tam giác SABC, SA⊥đáy
+      var uA = P(cx - W * 0.7, cy + H), uB = P(cx + W, cy + H), uC = P(cx + ox, cy + H + oy), uS = P(uA[0], uA[1] - s * 1.25);
+      segs.push(seg(uA[0], uA[1], uB[0], uB[1]), seg(uB[0], uB[1], uC[0], uC[1]), seg(uC[0], uC[1], uA[0], uA[1], true));
+      segs.push(seg(uS[0], uS[1], uA[0], uA[1]), seg(uS[0], uS[1], uB[0], uB[1]), seg(uS[0], uS[1], uC[0], uC[1], true));
+      var mm = 10; segs.push(seg(uA[0], uA[1] - mm, uA[0] + mm, uA[1] - mm), seg(uA[0] + mm, uA[1] - mm, uA[0] + mm, uA[1]));
+      lab("A", uA[0] - 14, uA[1] + 6); lab("B", uB[0] + 6, uB[1] + 6); lab("C", uC[0] + 6, uC[1]); lab("S", uS[0] - 4, uS[1] - 6);
+    } else if (kind === "batdien") {
+      // Bát diện đều: 6 đỉnh (trên, dưới, 4 quanh "xích đạo")
+      var T = P(cx, cy - s), Bt = P(cx, cy + s);
+      var L = P(cx - W, cy), R = P(cx + W, cy), Fr = P(cx - ox * 0.6, cy + oy * 0.6 + s * 0.18), Bk = P(cx + ox * 0.6, cy - oy * 0.6 - s * 0.18);
+      // cạnh ngoài (thấy)
+      segs.push(seg(T[0], T[1], L[0], L[1]), seg(T[0], T[1], R[0], R[1]), seg(T[0], T[1], Fr[0], Fr[1]));
+      segs.push(seg(Bt[0], Bt[1], L[0], L[1]), seg(Bt[0], Bt[1], R[0], R[1]), seg(Bt[0], Bt[1], Fr[0], Fr[1]));
+      segs.push(seg(L[0], L[1], Fr[0], Fr[1]), seg(Fr[0], Fr[1], R[0], R[1]));
+      // đỉnh sau + cạnh khuất (đứt)
+      segs.push(seg(T[0], T[1], Bk[0], Bk[1], true), seg(Bt[0], Bt[1], Bk[0], Bk[1], true), seg(L[0], L[1], Bk[0], Bk[1], true), seg(Bk[0], Bk[1], R[0], R[1], true));
     }
     return { type: "solid", segs: segs, ellipses: ell, labels: labels, color: color, size: w };
   }

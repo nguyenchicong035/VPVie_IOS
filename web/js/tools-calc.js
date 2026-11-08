@@ -43,8 +43,10 @@
     return ps;
   }
 
-  function buildGraph(body, expr0) {
+  function buildGraph(body, expr0, opts) {
     body.innerHTML = "";
+    opts = opts || {};
+    var GW = Math.max(220, Math.round(opts.w || 380)), GH = Math.max(160, Math.round(opts.h || 300));
     var expr = (expr0 || "x^2").replace(/^\s*y\s*=\s*/i, "");
     var cap = document.createElement("div"); cap.className = "ov-cap"; cap.textContent = "Máy tính đồ thị";
     var inp = document.createElement("input"); inp.className = "calc-disp"; inp.value = expr;
@@ -75,8 +77,8 @@
     }
     function render() {
       try {
-        if (global.VPGrapher) global.VPGrapher.draw(graph, substituted(), { w: 380, h: 300 });
-        else global.functionPlot({ target: graph, width: 360, height: 240, grid: true, data: [{ fn: substituted(), color: "#1F6FEB" }] });
+        if (global.VPGrapher) global.VPGrapher.draw(graph, substituted(), { w: GW, h: GH });
+        else global.functionPlot({ target: graph, width: GW, height: GH, grid: true, data: [{ fn: substituted(), color: "#1F6FEB" }] });
       } catch (e) { graph.textContent = "Không vẽ được."; }
     }
     inp.oninput = function () { buildSliders(); render(); };

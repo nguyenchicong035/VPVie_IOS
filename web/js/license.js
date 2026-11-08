@@ -91,8 +91,10 @@
   // ---- API công khai ----
   async function machineId() { return computeMachineId(); }
   function status() { return _status; }
-  function isPro() { return _status.active && _status.plan !== "free"; }
-  function isActive() { return _status.active; }
+  // BẢN WEB (GitHub Pages): luôn kích hoạt, miễn phí, KHÔNG BAO GIỜ HẾT HẠN.
+  // (Bản desktop dùng file license.js riêng có kiểm tra bản quyền theo máy.)
+  function isPro() { return true; }
+  function isActive() { return true; }
 
   async function check() {
     var mid = await computeMachineId();

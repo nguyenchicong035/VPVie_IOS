@@ -215,8 +215,12 @@
     ctx.beginPath();
     ctx.rect(0, 0, w, h);
     ctx.clip();
-    ctx.fillStyle = "#fff";
-    ctx.fillRect(0, 0, w, h);
+    // Trên trang: nền trong suốt để thấy dòng kẻ của giấy (chân thật hơn).
+    // Trong trình soạn: nền trắng cho dễ nhìn.
+    if (editor) {
+      ctx.fillStyle = "#fff";
+      ctx.fillRect(0, 0, w, h);
+    }
     if (d.grid) {
       const g = Math.floor(L);
       for (let i = -g; i <= g; i++) {
