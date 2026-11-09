@@ -429,9 +429,21 @@
   canvas.addEventListener("pointerdown", function (e) {
     // Bỏ chọn mọi lớp phủ (ẩn thanh công cụ nổi) khi thao tác trên canvas
     overlay.querySelectorAll(".ov.sel").forEach(function (o) { o.classList.remove("sel"); });
-    // Chống chạm nhầm lòng bàn tay: khi đang dùng bút thì bỏ qua ngón tay (touch)
-    if (e.pointerType === "touch" && (state.penDown || (Date.now() - (state.lastPen || 0) < 700))) return;
-    if (e.pointerType === "pen") { state.penDown = true; state.lastPen = Date.now(); }
+    // ----- Chống chạm nhầm lòng bàn tay (palm rejection) + chế độ cảm ứng -----
+    var touchMode = (state.opt && state.opt.touch) || "auto";
+    if (e.pointerType === "touch") {
+      if (touchMode === "pen") return;                                   // Chỉ bút: bỏ mọi chạm tay
+      if (state.penDown || (Date.now() - (state.lastPen || 0) < 700)) return; // đang/vừa dùng bút → bỏ tay
+      // Lòng bàn tay có vùng tiếp xúc LỚN → bỏ qua (giữ lại ngón tay/bút cảm ứng nhỏ).
+      var cw = e.width || 0, ch = e.height || 0;
+      if (touchMode !== "finger" && (cw > 40 || ch > 40)) return;
+      // Nhiều điểm chạm cùng lúc (tì cả bàn tay) → bỏ các điểm thừa, chỉ vẽ 1 nét.
+      if (state.drawing && state.activePointer != null && e.pointerId !== state.activePointer) return;
+    } else if (e.pointerType === "pen") {
+      if (touchMode === "finger") return;                                // Chỉ ngón tay: bỏ bút
+      state.penDown = true; state.lastPen = Date.now();
+    }
+    state.activePointer = e.pointerId;
     var pt = pos(e);
     if (state.tool === "oxyz") {
       canvas.setPointerCapture(e.pointerId); state.drawing = true;
@@ -494,8 +506,8 @@
       if (state.selMode === "rot3d" && state.rot3d && state.oxyzRot && state.oxyzRot.scene) {
         var r3 = state.rot3d, cam3 = state.oxyzRot.scene.camera;
         cam3.view = "3d";
-        cam3.yaw = r3.yaw0 + (pt.x - r3.start.x) * 0.01;
-        cam3.pitch = Math.max(-1.45, Math.min(1.45, r3.pitch0 + (pt.y - r3.start.y) * 0.01));
+        cam3.yaw = r3.yaw0 + (pt.x - r3.start.x) * 0.01;                 // kéo ngang → Ox,Oy xoay quanh Oz
+        cam3.pitch = Math.max(-1.45, Math.min(1.45, r3.pitch0 - (pt.y - r3.start.y) * 0.01)); // kéo lên → Oz ngẩng lên
         state.moved = true; redraw(); return;
       }
       if (state.selMode === "marquee") { state.selBox.x2 = pt.x; state.selBox.y2 = pt.y; }
@@ -600,8 +612,8 @@
     }
     return -1;
   }
-  canvas.addEventListener("pointerup", function (e) { if (e.pointerType === "pen") { state.penDown = false; state.lastPen = Date.now(); } endStroke(); });
-  canvas.addEventListener("pointercancel", function (e) { if (state.tool === "oxyz") { state.drawing = false; state.penDown = false; state.selBox = null; redraw(); return; } if (e.pointerType === "pen") { state.penDown = false; state.lastPen = Date.now(); } endStroke(); });
+  canvas.addEventListener("pointerup", function (e) { if (e.pointerType === "pen") { state.penDown = false; state.lastPen = Date.now(); } if (e.pointerId === state.activePointer) state.activePointer = null; endStroke(); });
+  canvas.addEventListener("pointercancel", function (e) { if (e.pointerId === state.activePointer) state.activePointer = null; if (state.tool === "oxyz") { state.drawing = false; state.penDown = false; state.selBox = null; redraw(); return; } if (e.pointerType === "pen") { state.penDown = false; state.lastPen = Date.now(); } endStroke(); });
   canvas.addEventListener("pointerleave", function (e) { if (state.drawing && state.tool !== "eraser" && state.tool !== "oxyz") endStroke(); });
 
   // ----- Lớp phủ dạng DỮ LIỆU (lưu/mở theo trang được)
