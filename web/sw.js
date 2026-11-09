@@ -1,9 +1,10 @@
 // VPVie PWA service worker. Mọi đường dẫn đều tương đối với scope để hoạt động
 // ở tên miền riêng, thư mục con và GitHub Pages.
-const CACHE_VERSION = "vpvie-ios-v13";
+const CACHE_VERSION = "vpvie-ios-v14";
 const CORE = [
-  "./js/page-viewport.js?v=1.1.8",
-  "./pwa.css?v=1.1.8", "./js/tools-table.js?v=1.1.8",
+  "./js/pdf-quality.js?v=1.1.9",
+  "./js/page-viewport.js?v=1.1.9",
+  "./pwa.css?v=1.1.9", "./js/tools-table.js?v=1.1.9",
   "./",
   "./index.html",
   "./bang.html",
@@ -50,18 +51,18 @@ const CORE = [
   "./js/tools-science.js",
   "./js/tools-diagram.js",
   "./js/tools-formula.js",
-  "./js/tools-solid.js?v=1.1.8",
+  "./js/tools-solid.js?v=1.1.9",
   "./js/oxyz-math.js",
   "./js/tools-oxyz.js",
   "./js/tools-var.js",
   "./js/tools-ruler.js",
   "./js/tools-export.js",
   "./js/gdrive.js",
-  "./js/ink-recognize.js?v=1.1.8",
-  "./js/app.js?v=1.1.8",
-  "./js/pwa.js?v=1.1.8",
+  "./js/ink-recognize.js?v=1.1.9",
+  "./js/app.js?v=1.1.9",
+  "./js/pwa.js?v=1.1.9",
   "./vendor/katex/katex.min.css",
-  "./style.css?v=1.1.8",
+  "./style.css?v=1.1.9",
   "./icons/icon-32.png",
   "./vendor/pdfjs/pdf.worker.min.js",
   "./vendor/katex/fonts/KaTeX_AMS-Regular.woff2",

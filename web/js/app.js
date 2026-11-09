@@ -29,7 +29,9 @@
     opt: { showdots: true, autolabel: false, snap: false, lblsize: 16, lblcolor: "#111111", dotsize: 4, subject: "toan", cursor: "pen", cursize: "s", touch: "auto", autosave: true, penlead: true, scratchrase: false },
   };
 
+  var qualityFrame = 0;
   var pageView = window.VPPageViewport.create(board, {
+    onZoom: function () { cancelAnimationFrame(qualityFrame); qualityFrame = requestAnimationFrame(resize); },
     isPan: function () { return state.tool === "pan"; },
     touchAllowed: function (e) { return !state.penDown && Date.now() - (state.lastPen || 0) >= 700 && (e.width || 0) <= 40 && (e.height || 0) <= 40; },
     snapshot: function () { return { items: snap(), geo: JSON.stringify({ points: window.VPGeo.points, shapes: window.VPGeo.shapes }), overlays: JSON.stringify(state.overlays), undo: undoStack.slice(), redo: redoStack.slice() }; },
@@ -61,14 +63,16 @@
     // Nền là ảnh/đề PDF: vẽ đè, viết lên trên
     if (state.pageBg) {
       var im = getImg(state.pageBg);
+      var sharpPdf = window.VPPdfQuality.request(pages && pages[cur] && pages[cur].pdf, w, h, canvas.width / Math.max(1, w), redraw);
       if (im.complete && im.naturalWidth) {
         var sc = Math.min(w / im.naturalWidth, Math.max(1, h - 24) / im.naturalHeight);
         var dw = im.naturalWidth * sc, dh = im.naturalHeight * sc;
-        ctx.drawImage(im, (w - dw) / 2, 0, dw, dh);
+        ctx.drawImage(sharpPdf || im, (w - dw) / 2, 0, dw, dh);
       }
       if (p.pagebreak) { ctx.fillStyle = "#B7C2CC"; ctx.font = "12px 'Segoe UI'"; ctx.textAlign = "center"; ctx.fillText("— Trang " + (cur + 1) + " —", w / 2, h - 10); ctx.textAlign = "left"; }
       ctx.restore(); return;
     }
+    window.VPPdfQuality.request(null);
     var sp = Math.max(8, p.spacing || 34), lc = p.lineColor || "#CBD8E8", x, y;
     ctx.strokeStyle = lc; ctx.lineWidth = p.thickness || 1;
     if (p.style === "lined") {
@@ -125,9 +129,11 @@
   function resize() {
     var r = { width: board.clientWidth, height: board.clientHeight };
     pageView.resize();
-    var dpr = window.devicePixelRatio || 1;
-    canvas.width = Math.floor(r.width * dpr);
-    canvas.height = Math.floor(r.height * dpr);
+    var dpr = Math.ceil((window.devicePixelRatio || 1) * Math.max(1, pageView.getState().zoom) * 4) / 4;
+    dpr *= window.VPPdfQuality.bounded(Math.max(1, r.width * dpr), Math.max(1, r.height * dpr));
+    var pw = Math.max(1, Math.floor(r.width * dpr)), ph = Math.max(1, Math.floor(r.height * dpr));
+    if (canvas.width !== pw) canvas.width = pw;
+    if (canvas.height !== ph) canvas.height = ph;
     canvas.style.width = r.width + "px";
     canvas.style.height = r.height + "px";
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -1346,9 +1352,11 @@
   if ($("lib-proj-new")) $("lib-proj-new").onclick = function () { newProject(); };
   if ($("lib-openstart")) $("lib-openstart").onchange = function () { lib.openOnStart = this.checked; libSave(); };
   // ----- Sao lưu / khôi phục toàn bộ thư viện -----
-  function exportBackup() {
+  async function exportBackup() {
     persistCurrent();
     var books = {}; (lib.books || []).forEach(function (m) { try { books[m.id] = localStorage.getItem(bookKey(m.id)) || ""; } catch (e) {} });
+    try { for (var id of Object.keys(books)) if (books[id]) books[id] = await window.VPPdfQuality.portable(books[id]); }
+    catch (e) { toast("Không sao lưu được PDF gốc: " + e.message); return; }
     var pack = { v: 1, type: "vpvie-backup", date: new Date().toISOString(), lib: lib, books: books };
     try { pack.classes = JSON.parse(localStorage.getItem("vpvie.classes") || "null"); } catch (e) {}
     try { pack.quizzes = JSON.parse(localStorage.getItem("vpvie.quizzes") || "null"); } catch (e) {}
@@ -1364,6 +1372,7 @@
     (obj.lib.books || []).forEach(function (m) {
       var nid = genId(), content = (obj.books || {})[m.id] || "";
       lib.books.unshift({ id: nid, name: (m.name || "Sổ") + "", created: m.created || Date.now(), updated: m.updated || Date.now(), project: null, cover: m.cover || null });
+      if (content) { try { var saved = JSON.parse(content); window.VPPdfQuality.restore(saved.pdfSources).catch(function (e) { toast("Không lưu được PDF gốc: " + e.message); }); delete saved.pdfSources; content = JSON.stringify(saved); } catch (e) {} }
       try { localStorage.setItem(bookKey(nid), content); } catch (e) {} added++;
     });
     try { if (obj.classes && obj.classes.list) { var c = JSON.parse(localStorage.getItem("vpvie.classes") || "null") || { current: "", list: {} }; Object.keys(obj.classes.list).forEach(function (nm) { if (c.list[nm] == null) c.list[nm] = obj.classes.list[nm]; }); if (!c.current) c.current = obj.classes.current || Object.keys(c.list)[0] || ""; localStorage.setItem("vpvie.classes", JSON.stringify(c)); } } catch (e) {}
@@ -2484,7 +2493,7 @@
   // ----- Trang & sổ bài giảng (lưu/mở)
   var pages = [blankPage()], cur = 0, saveTimer = null;
   function blankPage() { return { items: [], geo: { points: [], shapes: [] }, overlays: [], bg: null, note: "" }; }
-  function capture() { pages[cur] = { items: state.items, geo: { points: window.VPGeo.points, shapes: window.VPGeo.shapes }, overlays: state.overlays, bg: pages[cur] ? pages[cur].bg : null, thumb: pages[cur] ? pages[cur].thumb : null, note: pages[cur] ? pages[cur].note : "" }; }
+  function capture() { pages[cur] = { items: state.items, geo: { points: window.VPGeo.points, shapes: window.VPGeo.shapes }, overlays: state.overlays, bg: pages[cur] ? pages[cur].bg : null, pdf: pages[cur] ? pages[cur].pdf : null, thumb: pages[cur] ? pages[cur].thumb : null, note: pages[cur] ? pages[cur].note : "" }; }
   function restore() {
     var pg = pages[cur] || blankPage();
     state.items = pg.items; state.overlays = pg.overlays; state.pageBg = pg.bg || null; state.selected = []; resetHist();
@@ -2623,8 +2632,9 @@
     showDialog("dlg-history");
   }
   function loadBook(obj) {
+    window.VPPdfQuality.restore(obj && obj.pdfSources).catch(function (e) { toast("Không lưu được PDF gốc: " + e.message); });
     if (!obj || !obj.pages || !obj.pages.length) return;
-    pages = obj.pages.map(function (pg) { return { items: pg.items || [], geo: { points: (pg.geo && pg.geo.points) || [], shapes: (pg.geo && pg.geo.shapes) || [] }, overlays: pg.overlays || [], thumb: pg.thumb, bg: pg.bg || null, note: pg.note || "" }; });
+    pages = obj.pages.map(function (pg) { return { items: pg.items || [], geo: { points: (pg.geo && pg.geo.points) || [], shapes: (pg.geo && pg.geo.shapes) || [] }, overlays: pg.overlays || [], thumb: pg.thumb, bg: pg.bg || null, pdf: pg.pdf || null, note: pg.note || "" }; });
     cur = Math.min(obj.cur || 0, pages.length - 1); restore(); makeThumbs();
   }
 
@@ -2846,8 +2856,9 @@
     bind("fold-videos-pick", "fold-videos-open", "videos", "fold-videos");
   }
   initFolders();
-  function downloadBook() {
-    var json = serialize(), name = "so-bai-giang-" + Date.now() + ".vpvie.json";
+  async function downloadBook() {
+    var json; try { json = await window.VPPdfQuality.portable(serialize()); } catch (e) { toast("Không xuất được sổ: " + e.message); return; }
+    var name = "so-bai-giang-" + Date.now() + ".vpvie.json";
     if (window.VPDesktop && window.VPDesktop.isApp && folders.books) {
       window.VPDesktop.saveFile(folders.books, name, json, false).then(function (r) { toast(r.ok ? "Đã lưu sổ vào: " + r.path : "Lỗi lưu sổ."); });
       return;
@@ -2888,7 +2899,7 @@
   };
   if ($("gd-save")) $("gd-save").onclick = async function () {
     gdStatus("Đang lưu lên Drive…");
-    try { await window.VPDrive.save(serialize()); gdStatus("Đã lưu sổ lên Drive ✓", true); toast("Đã đồng bộ sổ lên Google Drive."); }
+    try { await window.VPDrive.save(await window.VPPdfQuality.portable(serialize())); gdStatus("Đã lưu sổ lên Drive ✓", true); toast("Đã đồng bộ sổ lên Google Drive."); }
     catch (e) { gdStatus("Lỗi lưu: " + e.message); toast(e.code === "NO_CLIENT_ID" ? "Hãy nhập Client ID trước." : e.message); }
   };
   if ($("gd-load")) $("gd-load").onclick = async function () {
@@ -3020,7 +3031,7 @@
   });
 
   // ----- Nhập ảnh / PDF làm nền trang (viết đè lên đề)
-  function setPageBg(url) { state.pageBg = url; pages[cur].bg = url; redraw(); scheduleSave(); snapshotThumb(); makeThumbs(); }
+  function setPageBg(url, pdfRef) { state.pageBg = url; pages[cur].bg = url; pages[cur].pdf = pdfRef || null; redraw(); scheduleSave(); snapshotThumb(); makeThumbs(); }
   if ($("set-img")) $("set-img").onclick = function () { $("imp-img").click(); };
   if ($("imp-img")) $("imp-img").onchange = function () { var f = this.files[0]; if (!f) return; var rd = new FileReader(); rd.onload = function () { setPageBg(rd.result); toast("Đã đặt ảnh làm nền trang."); }; rd.readAsDataURL(f); this.value = ""; hideDialog("dlg-settings"); };
   if ($("set-nobg")) $("set-nobg").onclick = function () { setPageBg(null); toast("Đã bỏ nền trang."); };
@@ -3033,12 +3044,13 @@
       var pdf = /\.pdf$/i.test(file.name) || file.type === "application/pdf";
       var word = /\.docx$/i.test(file.name);
       if (!pdf && !word) throw new Error("Hãy lưu tệp Word dạng .docx; định dạng .doc cũ chưa được hỗ trợ.");
-      var data = await file.arrayBuffer(), images = [];
+      var data = await file.arrayBuffer(), images = [], pdfId = null;
       toast(pdf ? "Đang mở PDF…" : "Đang mở Word…");
       if (pdf) {
         if (!window.pdfjsLib) throw new Error("Chưa tải được bộ đọc PDF.");
         window.pdfjsLib.GlobalWorkerOptions.workerSrc = new URL("vendor/pdfjs/pdf.worker.min.js", document.baseURI).href;
-        loadingTask = window.pdfjsLib.getDocument({ data: new Uint8Array(data) });
+        pdfId = await window.VPPdfQuality.store(file);
+        loadingTask = window.pdfjsLib.getDocument({ data: new Uint8Array(data), isEvalSupported: false });
         doc = await loadingTask.promise;
         for (var i = 1; i <= doc.numPages; i++) {
           var page = await doc.getPage(i), vp = page.getViewport({ scale: 2 });
@@ -3057,9 +3069,14 @@
         images.push(cv.toDataURL("image/jpeg", 0.85));
       }
       hideDialog("dlg-settings"); closeLibrary();
+      // Reattach an original to identical legacy previews without duplicating pages or losing ink.
+      if (pdfId && images.every(function (url) { return pages.some(function (pg) { return pg.bg === url; }); })) {
+        pages.forEach(function (pg) { var index = images.indexOf(pg.bg); if (index >= 0) pg.pdf = { documentId: pdfId, pageNumber: index + 1, name: file.name }; });
+        redraw(); scheduleSave(); toast("Đã cập nhật PDF gốc cho các trang đã chèn, giữ nguyên nét viết."); return;
+      }
       images.forEach(function (url, index) {
         if (index) addPage();
-        setPageBg(url);
+        setPageBg(url, pdfId ? { documentId: pdfId, pageNumber: index + 1, name: file.name } : null);
       });
       toast("Đã nhập " + images.length + " trang " + (pdf ? "PDF" : "Word") + ". Hãy viết lên đề.");
     } catch (e) {

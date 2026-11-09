@@ -6,7 +6,7 @@
     while (board.firstChild) surface.appendChild(board.firstChild);
     board.appendChild(surface);
     var recordingFrame = surface.querySelector("#rec-region"); if (recordingFrame) board.appendChild(recordingFrame);
-    var zoom = 1, x = 0, y = 0, touches = new Map(), pinch = null, pan = null, blocked = false, replaying = false, snapshot = null, quietUntil = 0;
+    var zoom = 1, x = 0, y = 0, touches = new Map(), pinch = null, pan = null, blocked = false, replaying = false, snapshot = null, quietUntil = 0, lastZoom = 1;
     var minus = document.getElementById('page-zoom-out'), plus = document.getElementById('page-zoom-in'), label = document.getElementById('page-zoom-reset');
     function clamp(value, min, max) { return Math.max(min, Math.min(max, value)); }
     function paint() {
@@ -18,6 +18,7 @@
       surface.style.transform = 'translate(' + x + 'px,' + y + 'px) scale(' + zoom + ')';
       label.textContent = Math.round(zoom * 100) + '%'; label.setAttribute('aria-label', 'Thu phóng ' + Math.round(zoom * 100) + ' phần trăm; bấm để về 100%');
       minus.disabled = zoom <= .25; plus.disabled = zoom >= 4;
+      if (lastZoom !== zoom) { lastZoom = zoom; if (options.onZoom) options.onZoom(zoom); }
     }
     function point(clientX, clientY) { var r = surface.getBoundingClientRect(); return { x: (clientX - r.left) / zoom, y: (clientY - r.top) / zoom }; }
     function zoomTo(value, cx, cy) {

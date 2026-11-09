@@ -5,9 +5,10 @@ exports.verifyZoom=async function(page){
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.locator("#board").evaluate(el=>Promise.all(el.getAnimations().map(a=>a.finished.catch(()=>{}))));
  const paper=page.locator('#paper');let rect=await page.locator('#board').boundingBox();
- const original=await page.evaluate(()=>({items:JSON.stringify(window.__vp.state.items),w:document.getElementById('paper').width,h:document.getElementById('paper').height}));
+ const original=await page.evaluate(()=>({items:JSON.stringify(window.__vp.state.items),w:document.getElementById('paper').width,h:document.getElementById('paper').height,cw:document.getElementById('paper').clientWidth}));
  await page.locator('#page-zoom-in').click();assert.equal(await page.locator('#page-zoom-reset').textContent(),'125%');
- assert.equal(await page.evaluate(()=>document.getElementById('paper').width),original.w);
+ await page.waitForFunction(w=>document.getElementById('paper').width>w,original.w);
+ assert.equal(await page.evaluate(()=>document.getElementById('paper').clientWidth),original.cw);
  await page.locator('#page-zoom-reset').click();
  await page.evaluate(()=>window.VPViewport.zoomTo(2));
  // Drawing must map screen coordinates back to document coordinates.
@@ -27,7 +28,7 @@ exports.verifyZoom=async function(page){
  await page.locator('#page-zoom-reset').click();
  await page.locator('[data-tool="pen"][data-pen="ball"]').click();
  assert.deepEqual(errors,[]);
- console.log('PASS: zoom buttons, Ctrl+wheel, viewport pan and accurate ink coordinates at 200%; logical page dimensions remain unchanged.');
+ console.log('PASS: zoom buttons, Ctrl+wheel, viewport pan and accurate ink coordinates at 200%; logical page dimensions remain unchanged while backing resolution increases.');
 };
 exports.verifyPinch=async function(page,cdp){
  const rect=await page.locator('#board').boundingBox(),cx=rect.x+rect.width/2,cy=rect.y+rect.height/2;

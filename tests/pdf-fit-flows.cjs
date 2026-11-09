@@ -4,7 +4,7 @@ exports.verifyPdfFit=async function(page){
  await page.evaluate(()=>{
   window._paperImages=[];const original=CanvasRenderingContext2D.prototype.drawImage;
   CanvasRenderingContext2D.prototype.drawImage=function(image,...args){
-   if(this.canvas.id==='paper'&&image instanceof HTMLImageElement)window._paperImages.push({src:image.src,args,natural:[image.naturalWidth,image.naturalHeight],canvas:[this.canvas.clientWidth,this.canvas.clientHeight]});
+   if(this.canvas.id==='paper'&&(image instanceof HTMLImageElement||image.dataset?.pdfPage==='true'))window._paperImages.push({src:image.src||window.__vp.state.pageBg,args,natural:[image.naturalWidth||image.width,image.naturalHeight||image.height],canvas:[this.canvas.clientWidth,this.canvas.clientHeight]});
    return original.call(this,image,...args);
   };
  });

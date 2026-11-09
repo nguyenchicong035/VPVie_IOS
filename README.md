@@ -98,3 +98,14 @@ Chụm/tách hai ngón tay trên bảng để thu nhỏ/phóng to; kéo hai ngó
 vùng đang xem. Trên máy tính có nút −/+, bấm phần trăm để về 100%, Ctrl + cuộn
 chuột và công cụ bàn tay. Thu phóng 25–400% giữ nguyên dữ liệu trang; xuất ảnh,
 PDF và in vẫn lấy toàn bộ trang. Bộ nhớ đệm nâng lên v13.
+
+## PDF rõ hơn khi thu phóng (1.1.9)
+
+PDF gốc được giữ trong IndexedDB và vẽ lại theo mức zoom; khung canvas cũng
+tăng độ phân giải theo mật độ hiển thị. Bộ nhớ raster được giới hạn khoảng
+12 triệu điểm ảnh mỗi khung. PDF gốc đi kèm khi xuất sổ, sao lưu hoặc lưu Drive,
+và có thể render lại khi offline sau khi đã tải ứng dụng. Bộ nhớ đệm nâng lên v14.
+
+PDF nhập ở bản cũ chỉ còn ảnh xem trước: nhập lại tệp gốc để có chất lượng tốt
+nhất. Nếu ảnh xem trước trùng khớp, ứng dụng gắn lại nguồn cho trang cũ và giữ
+nguyên nét viết. Độ nét của PDF quét vẫn phụ thuộc ảnh nguồn.
