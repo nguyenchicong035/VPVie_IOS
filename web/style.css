@@ -1147,3 +1147,37 @@ body.theme-dark .lib-backup{border-color:#2d313b}
 /* ===== Khóa PIN sổ ===== */
 .lib-lock{position:absolute;top:10px;left:10px;font-size:15px;background:rgba(255,255,255,.92);border-radius:8px;padding:2px 6px;box-shadow:0 1px 4px rgba(0,0,0,.15)}
 .lib.multi .lib-lock,.lib-card:hover .lib-lock{opacity:0}
+
+/* Consistent projection-friendly toolbar, independent of OS emoji fonts. */
+.nr-row { gap: 3px; padding: 4px 10px; }
+.nr-ic { min-width: 36px; height: 36px; padding: 0 7px; font-size: 18px; }
+.nr-ic svg { width: 22px; height: 22px; flex: 0 0 auto; }
+.nr-ic[hidden], .appbar-btn[hidden], .lic-badge[hidden] { display: none !important; }
+.nr-pill { padding: 6px 9px; gap: 8px; background: #faf6f7; border: 1px solid #eee1e5; }
+.nr-pill .sw { width: 20px; height: 20px; }
+.nr-page-ind { margin-left: auto; }
+.shapes-menu { max-height: calc(100dvh - 190px); overflow: auto; }
+.shapes-menu .sm-col { min-width: 190px; max-height: calc(100dvh - 205px); }
+.ov-web .ov-body > webview.ov-web { display: flex; width: 420px; height: 300px; min-height: 240px; padding: 0; border: 0; }
+.ov-web-status { font-size: 12px; color: #626976; padding: 2px 6px; }
+.ov-web-status:empty { display: none; }
+@media (max-width: 800px) {
+  .nr-row { padding: 3px 5px; gap: 2px; }
+  .nr-ic { min-width: 34px; height: 34px; padding: 0 5px; }
+  .nr-pill { gap: 5px; padding: 4px 6px; }
+  .shapes-menu { max-width: calc(100vw - 12px); }
+}
+
+.nr-row-tools { gap: 2px; padding-inline: 8px; }
+.nr-row-tools .nr-pill { gap: 6px; }
+
+/* Tables sit directly on the paper, including imported or colored backgrounds. */
+.ov.ov-table, .ov-table .ov-body, table.ov-table, table.ov-table td {
+  background: transparent; box-shadow: none;
+}
+.ov.ov-table { border: 0; padding: 0; }
+table.ov-table { padding: 0; }
+table.ov-table td { cursor: text; }
+table.ov-table td:focus { outline: 2px solid var(--teal); outline-offset: -2px; }
+.table-dimensions { display: flex; gap: 16px; }
+.table-dimensions label { flex: 1; }

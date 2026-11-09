@@ -19,11 +19,14 @@
   function Point(x, y, id) { return { x: x, y: y, id: id }; }
   function pathLen(pts) { var d = 0; for (var i = 1; i < pts.length; i++) if (pts[i].id === pts[i - 1].id) d += Math.hypot(pts[i].x - pts[i - 1].x, pts[i].y - pts[i - 1].y); return d; }
   function resample(points, n) {
-    var I = pathLen(points) / (n - 1), D = 0, out = [points[0]];
+    var length = pathLen(points);
+    if (!length) return Array.from({ length: n }, function () { return Point(points[0].x, points[0].y, points[0].id); });
+    var I = length / (n - 1), D = 0, out = [points[0]];
     var pts = points.slice();
-    for (var i = 1; i < pts.length; i++) {
+    for (var i = 1; i < pts.length && out.length < n; i++) {
       if (pts[i].id === pts[i - 1].id) {
         var d = Math.hypot(pts[i].x - pts[i - 1].x, pts[i].y - pts[i - 1].y);
+        if (!d) continue;
         if (D + d >= I) {
           var qx = pts[i - 1].x + ((I - D) / d) * (pts[i].x - pts[i - 1].x);
           var qy = pts[i - 1].y + ((I - D) / d) * (pts[i].y - pts[i - 1].y);

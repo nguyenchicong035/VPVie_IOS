@@ -1,12 +1,12 @@
 <!doctype html>
-<html lang="vi">
+<html lang="vi" data-vpvie-version="1.1.6">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
   <title>VPVie – Bảng dạy học</title>
   <link rel="stylesheet" href="vendor/katex/katex.min.css" />
   <link rel="stylesheet" href="oxyz.css" />
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css?v=1.1.6" />
   <link rel="manifest" href="manifest.webmanifest" />
   <meta name="theme-color" content="#7a1020" />
   <meta name="mobile-web-app-capable" content="yes" />
@@ -23,37 +23,36 @@
     <div class="nr-title-left"><a href="index.html" class="nr-home" title="Về trang chủ">△</a><span id="doc-title">Sổ bài giảng – VPVie</span></div>
     <div class="nr-title-right">
       <span id="lic-badge" class="lic-badge" hidden><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.2-2.8 7.4-7 8.6C7.8 18.4 5 15.2 5 11V6z"/><path d="M9 11.5l2 2 4-4"/></svg><span class="lic-txt">Bản quyền</span></span>
-      <span id="ai-note" class="ai-note">Chưa bật AI</span>
       <button id="btn-license" class="appbar-btn" title="Kích hoạt bản quyền theo máy"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="4"/><path d="M10.8 12.2 20 3M17 6l2.5 2.5M14 9l2.5 2.5"/></svg><span>Kích hoạt</span></button>
     </div>
   </header>
 
   <!-- Hàng 1: tệp & điều hướng -->
   <div class="nr-row nr-row-top">
-    <button id="btn-menu" class="nr-ic" title="Danh mục">☰</button>
-    <button id="btn-library" class="nr-ic" title="Thư viện sổ">📚</button>
-    <button id="book-save" class="nr-ic" title="Lưu sổ">🖫</button>
-    <button id="undo" class="nr-ic" title="Hoàn tác">↶</button>
-    <button id="redo" class="nr-ic" title="Làm lại">↷</button>
+    <button id="btn-menu" class="nr-ic" title="Danh mục"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+    <button id="btn-library" class="nr-ic" title="Thư viện sổ"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h4v16H4zM10 4h4v16h-4zM16 5l4-1 3 15-4 1z"/></svg></button>
+    <button id="book-save" class="nr-ic" title="Lưu sổ"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h12l3 3v15H4V3zM8 3v6h8V3M8 21v-8h8v8"/></svg></button>
+    <button id="undo" class="nr-ic" title="Hoàn tác"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4 3 9l5 5M3 9h10a6 6 0 0 1 0 12"/></svg></button>
+    <button id="redo" class="nr-ic" title="Làm lại"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="m16 4 5 5-5 5M21 9H11a6 6 0 0 0 0 12"/></svg></button>
     <span class="nr-sep"></span>
-    <button id="book-open" class="nr-ic" title="Mở sổ">🗁</button>
-    <button id="btn-sidebar" class="nr-ic active" title="Hiện/ẩn danh sách trang">▧</button>
-    <button id="page-add" class="nr-ic" title="Thêm trang">🗋</button>
-    <button id="btn-settings" class="nr-ic" title="Cài đặt"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V21a2 2 0 0 1-4 0v-.1a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 0 1 0-4h.1a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3H9a1.6 1.6 0 0 0 1-1.5V3a2 2 0 0 1 4 0v.1a1.6 1.6 0 0 0 1 1.5 1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V9a1.6 1.6 0 0 0 1.5 1H21a2 2 0 0 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1z"/></svg></button>
-    <button id="btn-record" class="nr-ic" title="Quay màn hình">⏺</button>
-    <span class="nr-page-ind"><button id="page-prev" class="nr-mini">◀</button><span id="page-label">1 / 1</span><button id="page-next" class="nr-mini">▶</button><span class="nr-zoom">· 100%</span></span>
+    <button id="book-open" class="nr-ic" title="Mở sổ"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V4h6l3 3h9l-4 13H2L5 9h16"/></svg></button>
+    <button id="btn-sidebar" class="nr-ic active" title="Hiện/ẩn danh sách trang"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="1"/><path d="M8 3v18M12 7h6M12 11h6M12 15h6"/></svg></button>
+    <button id="page-add" class="nr-ic" title="Thêm trang"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="M5 2h9l5 5v15H5zM14 2v6h5"/></svg></button>
+    <button id="btn-settings" class="nr-ic" title="Cài đặt"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v5m0 4v9M12 3v9m0 4v5M18 3v3m0 4v11"/><path d="M3 8h6v4H3zM9 12h6v4H9zM15 6h6v4h-6z"/></svg></button>
+    <button id="btn-record" class="nr-ic" title="Quay màn hình"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5" fill="currentColor" stroke="none"/></svg></button>
+    <span class="nr-page-ind"><button id="page-prev" class="nr-mini" title="Trang trước">‹</button><span id="page-label">1 / 1</span><button id="page-next" class="nr-mini" title="Trang sau">›</button><span class="nr-zoom">· 100%</span></span>
   </div>
 
   <!-- Hàng 2: công cụ vẽ -->
   <div class="nr-row nr-row-tools">
-    <button id="btn-shapes-fav" class="nr-ic" title="Nhãn dán & con dấu">★</button>
+    <button id="btn-shapes-fav" class="nr-ic" title="Nhãn dán & con dấu"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg></button>
     <span class="nr-sep"></span>
-    <button data-tool="pen" data-pen="ball" class="nr-ic tool active" title="Bút bi">🖊</button><button id="btn-pen-dd" class="nr-dd" title="Tuỳ chọn bút">▾</button>
-    <button data-tool="eraser" data-erase="stroke" class="nr-ic tool" title="Tẩy">⌫</button><button id="btn-eraser-dd" class="nr-dd" title="Tuỳ chọn tẩy">▾</button>
-    <button data-tool="pen" data-pen="brush" class="nr-ic tool" title="Bút dạ (nét theo lực)">〰</button>
-    <button data-tool="pen" data-pen="pencil" class="nr-ic tool" title="Bút chì">✎</button>
-    <button id="beautify" class="nr-ic on" title="Chế độ viết (giữ tay / nắn thẳng / thành hình)">✨</button><button id="btn-write-dd" class="nr-dd" title="Chế độ viết">▾</button>
-    <button id="btn-laser" class="nr-ic tool" title="Bút laser phát sáng">🪄</button><button id="btn-laser-dd" class="nr-dd" title="Tuỳ chọn laser">▾</button>
+    <button data-tool="pen" data-pen="ball" class="nr-ic tool active" title="Bút bi"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6v13l-3 6-3-6zM9 6h6M9 16h6M12 19v3M15 4h3v8"/></svg></button><button id="btn-pen-dd" class="nr-dd" title="Tuỳ chọn bút">▾</button>
+    <button data-tool="eraser" data-erase="stroke" class="nr-ic tool" title="Tẩy"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="m3 14 10-11 8 7-10 11H9zM9 8l8 8M11 21h10"/></svg></button><button id="btn-eraser-dd" class="nr-dd" title="Tuỳ chọn tẩy">▾</button>
+    <button data-tool="pen" data-pen="brush" class="nr-ic tool" title="Bút dạ (nét theo lực)"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="M3 16c4-18 5 17 9-1s6 12 9-8"/></svg></button>
+    <button data-tool="pen" data-pen="pencil" class="nr-ic tool" title="Bút chì"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="m3 21 2-7L17 2l5 5L10 19zM5 14l5 5M14 5l5 5"/></svg></button>
+    <button id="beautify" class="nr-ic on" title="Chế độ viết (giữ tay / nắn thẳng / thành hình)"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="m5 20 12-12-3-3L2 17zM14 2v3M20 5l-3 1M19 10h3M9 4l2 2"/></svg></button><button id="btn-write-dd" class="nr-dd" title="Chế độ viết">▾</button>
+    <button id="btn-laser" class="nr-ic tool" title="Bút laser phát sáng"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="m4 20 12-12 3 3L7 23zM18 2v4M22 6h-3M14 3l2 3M22 11l-3-2"/></svg></button><button id="btn-laser-dd" class="nr-dd" title="Tuỳ chọn laser">▾</button>
     <!-- Màu bút -->
     <span class="nr-pill">
       <button data-color="#111111" class="sw sel"></button>
@@ -75,12 +74,12 @@
       <button data-hl="#7FD8F2" class="sw hl" style="background:#7FD8F2"></button>
     </span>
     <span class="nr-sep"></span>
-    <button data-geo="line" class="nr-ic tool geo-tool" title="Đường thẳng">╱</button>
-    <button id="btn-arrow" class="nr-ic" title="Mũi tên / đoạn đo / ngoặc">↗</button>
-    <button id="btn-ruler" class="nr-ic" title="Thước kẻ / đo góc">📐</button>
-    <button id="btn-shapes" class="nr-ic" title="Hình học 2D (hơn 30 mẫu)">△</button>
-    <button id="btn-solid" class="nr-ic" title="Hình không gian 3D"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 7.5v9L12 21l8-4.5v-9L12 3Z"/><path d="M4 7.5 12 12l8-4.5"/><path d="M12 12v9"/></svg></button>
-    <button id="btn-plot" class="nr-ic" title="Đồ thị hàm số"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4v16h16"/><polyline points="6.5,15.5 10.5,11 13.5,13 20,5.5"/></svg></button>
+    <button data-geo="line" class="nr-ic tool geo-tool" title="Nét đứt" aria-label="Nét đứt"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20 20 4" stroke-dasharray="5 4"/></svg></button>
+    <button id="btn-arrow" class="nr-ic" title="Mũi tên / đoạn đo / ngoặc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20 20 4M10 4h10v10"/></svg></button>
+    <button id="btn-ruler" class="nr-ic" title="Thước kẻ / đo góc"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21 21 3v18zM10 18h8v-8M8 16l2 2M11 13l2 2M14 10l2 2"/></svg></button>
+    <button id="btn-shapes" class="nr-ic" title="Hình phẳng & hình không gian"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="m3 19 5-10 5 10zM13 4h7v7h-7z"/></svg></button>
+    <button id="btn-solid" class="nr-ic" title="Dựng hình động" aria-label="Dựng hình động"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 9 17H3zM12 3v12L3 20M12 15l9 5"/><circle cx="12" cy="3" r="1.5" fill="white"/><circle cx="3" cy="20" r="1.5" fill="white"/><circle cx="21" cy="20" r="1.5" fill="white"/></svg></button>
+    <button id="btn-plot" class="nr-ic" title="Đồ thị hàm số"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3v18h17M3 15c4-14 6 12 10-2s6-9 8-9"/></svg></button>
     <button id="btn-table" class="nr-ic" title="Chèn bảng"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="14" rx="1.5"/><path d="M4 10h16M4 14.5h16M9.5 5v14M14.5 5v14"/></svg></button>
     <button id="btn-oxyz" class="nr-ic" title="Hình học không gian Oxyz (3D)" aria-label="Hình học không gian Oxyz (3D)"><svg width="25" height="25" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 16V3m0 13h13M12 16l-8 8M9 6l3-3 3 3M22 13l3 3-3 3M4 20v4h4"/><circle cx="12" cy="16" r="2" fill="currentColor"/><path d="m17 7 4 4"/><circle cx="17" cy="7" r="1.5"/></svg></button>
     <button id="btn-var" class="nr-ic" title="Bảng biến thiên / xét dấu"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="14" rx="1.5"/><path d="M4 10.5h16M10 5v5.5"/><path d="M11 17 17.5 12m0 0h-3m3 0v3"/></svg></button>
@@ -94,19 +93,19 @@
 
   <!-- Hàng 3: văn bản, tô, chọn, di chuyển + nhận dạng AI -->
   <div class="nr-row nr-row-tools2">
-    <button id="btn-text" class="nr-ic" title="Chữ & chèn đường/mũi tên">T</button><button id="btn-text-dd" class="nr-dd" title="Chèn đường, mũi tên, ngoặc">▾</button>
+    <button id="btn-text" class="nr-ic" title="Chữ & chèn đường/mũi tên"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6V3h16v3M12 3v18M8 21h8"/></svg></button><button id="btn-text-dd" class="nr-dd" title="Chèn đường, mũi tên, ngoặc">▾</button>
     <button id="btn-fill" class="nr-ic" title="Tô màu miền"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5c3.2 4.3 5.3 7 5.3 9.6a5.3 5.3 0 0 1-10.6 0C6.7 10.5 8.8 7.8 12 3.5Z"/></svg></button><button id="btn-fill-dd" class="nr-dd" title="Tuỳ chọn tô">▾</button>
-    <button data-tool="eraser" data-erase="area" class="nr-ic tool" title="Tẩy vùng (khoanh để xoá)">▨</button>
-    <button id="btn-select" class="nr-ic" title="Chọn vùng">⬚</button><button id="btn-select-dd" class="nr-dd" title="Kiểu chọn">▾</button>
-    <button data-tool="pan" class="nr-ic tool" title="Di chuyển trang">✋</button>
-    <button id="clear" class="nr-ic" title="Xóa trang">🗑</button>
+    <button data-tool="eraser" data-erase="area" class="nr-ic tool" title="Tẩy vùng (khoanh để xoá)"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="m3 14 10-11 8 7-10 11H9zM9 8l8 8M3 23h18" stroke-dasharray="3 2"/></svg></button>
+    <button id="btn-select" class="nr-ic" title="Chọn vùng"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9V3h6M15 3h6v6M21 15v6h-6M9 21H3v-6" stroke-dasharray="3 2"/></svg></button><button id="btn-select-dd" class="nr-dd" title="Kiểu chọn">▾</button>
+    <button data-tool="pan" class="nr-ic tool" title="Di chuyển trang"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="M7 12V7a2 2 0 0 1 4 0V3a2 2 0 0 1 4 0v5a2 2 0 0 1 4 0v3a2 2 0 0 1 3 1v5c0 4-4 6-8 6-4 0-6-3-8-6l-3-4a2 2 0 0 1 3-2l4 4"/></svg></button>
+    <button id="clear" class="nr-ic" title="Xóa trang"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M9 6V3h6v3M6 6l1 15h10l1-15M10 10v7M14 10v7"/></svg></button>
     <span class="nr-sep"></span>
     <button id="btn-ai" class="nr-ic primary" title="Nhận dạng chữ viết tay">🤖 Nhận dạng</button>
     <button id="btn-ai-opt" class="nr-ic" title="Tuỳ chọn nhận dạng">▾</button>
     <span id="ai-status" class="ai-status"></span>
     <span class="nr-sep"></span>
-    <button id="btn-png" class="nr-ic" title="Xuất ảnh PNG">🖼</button>
-    <button id="btn-pdf" class="nr-ic" title="Xuất PDF">📄</button>
+    <button id="btn-png" class="nr-ic" title="Xuất ảnh PNG"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="1"/><path d="m3 17 6-6 4 4 3-3 5 5"/><circle cx="16" cy="8" r="1"/></svg></button>
+    <button id="btn-pdf" class="nr-ic" title="Xuất PDF"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"><path d="M5 2h9l5 5v15H5zM14 2v6h5M8 12h8M8 16h8"/></svg></button>
   </div>
 
   <div class="nr-main">
@@ -324,25 +323,24 @@
     </div>
   </div>
 
-  <div id="dlg-solid" class="dlg">
-    <div class="dlg-card">
-      <div class="dlg-head">Chèn hình không gian 3D <button data-close="dlg-solid" class="x">✕</button></div>
-      <div class="shape-grid solid-grid">
-        <button data-solid="chop-para" class="shape s3"><canvas class="shape-thumb" width="120" height="96"></canvas><span>Chóp đáy bình hành</span></button>
-        <button data-solid="chop-para-sa" class="shape s3"><canvas class="shape-thumb" width="120" height="96"></canvas><span>Chóp đáy bình hành, SA⊥đáy</span></button>
-        <button data-solid="chop4" class="shape s3"><canvas class="shape-thumb" width="120" height="96"></canvas><span>Chóp đáy tứ giác</span></button>
-        <button data-solid="chop-thang" class="shape s3"><canvas class="shape-thumb" width="120" height="96"></canvas><span>Chóp đáy hình thang</span></button>
-        <button data-solid="chop3" class="shape s3"><canvas class="shape-thumb" width="120" height="96"></canvas><span>Chóp tam giác</span></button>
-        <button data-solid="chop3-sa" class="shape s3"><canvas class="shape-thumb" width="120" height="96"></canvas><span>Chóp tam giác, SA⊥đáy</span></button>
-        <button data-solid="hop" class="shape s3"><canvas class="shape-thumb" width="120" height="96"></canvas><span>Hình hộp</span></button>
-        <button data-solid="lapphuong" class="shape s3"><canvas class="shape-thumb" width="120" height="96"></canvas><span>Hình lập phương</span></button>
-        <button data-solid="langtru" class="shape s3"><canvas class="shape-thumb" width="120" height="96"></canvas><span>Lăng trụ tam giác</span></button>
-        <button data-solid="non" class="shape s3"><canvas class="shape-thumb" width="120" height="96"></canvas><span>Hình nón</span></button>
-        <button data-solid="tru" class="shape s3"><canvas class="shape-thumb" width="120" height="96"></canvas><span>Hình trụ</span></button>
-        <button data-solid="cau" class="shape s3"><canvas class="shape-thumb" width="120" height="96"></canvas><span>Mặt cầu</span></button>
-        <button data-solid="batdien" class="shape s3"><canvas class="shape-thumb" width="120" height="96"></canvas><span>Bát diện đều</span></button>
+  <div id="dlg-table" class="dlg">
+    <form id="table-form" class="dlg-card">
+      <div class="dlg-head">Chèn bảng <button type="button" data-close="dlg-table" class="x">✕</button></div>
+      <div class="table-dimensions">
+        <label>Số hàng <input id="table-rows" class="in" type="number" min="1" max="100" step="1" value="3" required /></label>
+        <label>Số cột <input id="table-cols" class="in" type="number" min="1" max="50" step="1" value="3" required /></label>
       </div>
-      <div class="hint">Nét khuất vẽ nét đứt (kiểu hình chiếu trong sách). Chọn hình xong có thể kéo-thả & đổi kích thước.</div>
+      <p class="hint">Bảng có nền trong suốt. Nhấp vào từng ô để nhập nội dung.</p>
+      <div class="dlg-foot"><button type="button" data-close="dlg-table" class="btn ghost">Hủy</button><button type="submit" class="btn">Chèn bảng</button></div>
+    </form>
+  </div>
+
+  <div id="dlg-web" class="dlg">
+    <div class="dlg-card">
+      <div class="dlg-head">Trình duyệt web <button data-close="dlg-web" class="x">✕</button></div>
+      <label for="web-url">Địa chỉ trang web</label>
+      <input id="web-url" class="in" type="url" placeholder="https://example.com" autocomplete="url" style="width:100%;margin:12px 0" />
+      <div class="dlg-foot"><button data-close="dlg-web" class="btn ghost">Hủy</button><button id="web-add" class="btn">Mở trang</button></div>
     </div>
   </div>
 
@@ -963,32 +961,17 @@
   <script src="js/tools-science.js"></script>
   <script src="js/tools-diagram.js"></script>
   <script src="js/tools-formula.js"></script>
-  <script src="js/tools-solid.js"></script>
+  <script src="js/tools-solid.js?v=1.1.6"></script>
   <script src="js/oxyz-math.js"></script>
   <script src="js/tools-oxyz.js"></script>
   <script src="js/tools-var.js"></script>
   <script src="js/tools-ruler.js"></script>
   <script src="js/tools-export.js"></script>
   <script src="js/gdrive.js"></script>
-  <script src="js/ink-recognize.js"></script>
+  <script src="js/ink-recognize.js?v=1.1.6"></script>
   <script src="js/license.js"></script>
-  <script src="js/app.js"></script>
-  <script>
-  if("serviceWorker" in navigator){
-    var _reloaded=false;
-    navigator.serviceWorker.addEventListener("controllerchange",function(){ if(_reloaded)return; _reloaded=true; location.reload(); });
-    window.addEventListener("load",function(){
-      navigator.serviceWorker.register("sw.js").then(function(reg){
-        // Có bản mới đang chờ -> áp dụng ngay
-        function apply(w){ if(w) w.postMessage({type:"SKIP_WAITING"}); }
-        if(reg.waiting) apply(reg.waiting);
-        reg.addEventListener("updatefound",function(){ var nw=reg.installing; if(nw) nw.addEventListener("statechange",function(){ if(nw.state==="installed" && navigator.serviceWorker.controller) apply(nw); }); });
-        // kiểm tra cập nhật định kỳ
-        setInterval(function(){ reg.update().catch(function(){}); }, 60*60*1000);
-      }).catch(function(){});
-    });
-  }
-  </script>
+  <script src="js/app.js?v=1.1.6"></script>
+  <script src="./js/pwa.js?v=1.1.6"></script>
 
 </body>
 </html>

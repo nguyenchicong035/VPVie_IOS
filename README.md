@@ -71,3 +71,15 @@ Backend FastAPI (Python). Frontend HTML/Canvas thuần. Thư viện nguồn mở
 
 ## Lộ trình
 Hình học động kéo-thả • Khối câu hỏi trắc nghiệm/Đúng-Sai • Nhiều trang & sổ bài giảng • Bảng biến thiên/xét dấu • Hỏi Excel tiếng Việt • Tạo slide bằng AI • Soạn thảo Word/PowerPoint/PDF/Markdown/HTML.
+
+## Cập nhật web 1.1.6
+
+Bản web đã đồng bộ thanh công cụ, Dựng hình động và các hình không gian bổ sung.
+Bảng mới có nền trong suốt; nút Mở sổ nhận JSON, PDF và Word `.docx`. Định dạng
+Word `.doc` cũ cần lưu lại thành `.docx`. Dạy nét chữ cho phép nhập ký hiệu ngay
+sau khi nhấc bút; dùng **Thử nhận dạng** khi cần xem kết quả dự đoán.
+
+Service worker dùng bộ nhớ đệm `vpvie-ios-v11`, lấy mã ứng dụng mới từ mạng khi
+online và dùng bản đã lưu khi offline. Khi có mạng, mở lại PWA để nhận cập nhật;
+không cần xóa dữ liệu website hay cài lại ứng dụng. Kiểm thử nâng cấp bộ nhớ đệm
+và mở lại offline: `node tests/pwa-update-browser.cjs`.

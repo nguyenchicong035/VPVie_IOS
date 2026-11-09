@@ -8,8 +8,18 @@
   var installPrompt = null;
 
   if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost" || location.hostname === "127.0.0.1")) {
+    var hadController = !!navigator.serviceWorker.controller, reloading = false;
+    navigator.serviceWorker.addEventListener("controllerchange", function () {
+      if (!hadController || reloading) return;
+      reloading = true; location.reload();
+    });
     window.addEventListener("load", function () {
-      navigator.serviceWorker.register(new URL("sw.js", appRoot), { scope: appRoot.pathname }).catch(function (error) {
+      navigator.serviceWorker.register(new URL("sw.js", appRoot), { scope: appRoot.pathname, updateViaCache: "none" }).then(function (registration) {
+        registration.update().catch(function () {});
+        document.addEventListener("visibilitychange", function () {
+          if (!document.hidden) registration.update().catch(function () {});
+        });
+      }).catch(function (error) {
         console.warn("Không thể đăng ký chế độ ngoại tuyến:", error);
       });
     });
