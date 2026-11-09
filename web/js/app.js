@@ -45,7 +45,11 @@
     // Nền là ảnh/đề PDF: vẽ đè, viết lên trên
     if (state.pageBg) {
       var im = getImg(state.pageBg);
-      if (im.complete && im.naturalWidth) { var sc = w / im.naturalWidth; ctx.drawImage(im, 0, 0, im.naturalWidth, im.naturalHeight, 0, 0, w, im.naturalHeight * sc); }
+      if (im.complete && im.naturalWidth) {
+        var sc = Math.min(w / im.naturalWidth, Math.max(1, h - 24) / im.naturalHeight);
+        var dw = im.naturalWidth * sc, dh = im.naturalHeight * sc;
+        ctx.drawImage(im, (w - dw) / 2, 0, dw, dh);
+      }
       if (p.pagebreak) { ctx.fillStyle = "#B7C2CC"; ctx.font = "12px 'Segoe UI'"; ctx.textAlign = "center"; ctx.fillText("— Trang " + (cur + 1) + " —", w / 2, h - 10); ctx.textAlign = "left"; }
       ctx.restore(); return;
     }
@@ -681,22 +685,7 @@
     else if (kind === "ptable") window.VPScience.buildPTable(body);
     else if (kind === "chem") window.VPScience.buildChem(body);
     else if (kind === "circuit" || kind === "force" || kind === "pedigree" || kind === "dna") { data._save = scheduleSave; window.VPDiagram.build(body, kind, data); }
-    else if (kind === "table") {
-      var tb = document.createElement("table"); tb.className = "ov-table";
-      data.cells = data.cells || [];
-      for (var ri = 0; ri < data.rows; ri++) {
-        var tr = document.createElement("tr");
-        for (var ci = 0; ci < data.cols; ci++) {
-          var td = document.createElement("td"); td.contentEditable = "true";
-          data.cells[ri] = data.cells[ri] || [];
-          td.textContent = data.cells[ri][ci] || "";
-          (function (rr, cc, cell) { cell.addEventListener("input", function () { data.cells[rr] = data.cells[rr] || []; data.cells[rr][cc] = cell.textContent; scheduleSave(); }); })(ri, ci, td);
-          tr.appendChild(td);
-        }
-        tb.appendChild(tr);
-      }
-      body.appendChild(tb);
-    }
+    else if (kind === "table") window.VPTable.build(body, data, scheduleSave);
     else if (kind === "web") {
       var embed = toEmbedUrl(data.url);
       var bar = document.createElement("div"); bar.className = "ov-webcap";
@@ -741,6 +730,7 @@
   function applyOvScale(el, ov) {
     var body = el.querySelector(".ov-body"); if (!body) return;
     var s = ov.scale || 1;
+    el.style.setProperty("--table-toolbar-top", (-42 - 22 * s) + "px");
     body.style.transformOrigin = "top left";
     body.style.transform = s === 1 ? "" : "scale(" + s + ")";
   }

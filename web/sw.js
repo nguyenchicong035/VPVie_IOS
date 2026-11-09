@@ -1,7 +1,8 @@
 // VPVie PWA service worker. Mọi đường dẫn đều tương đối với scope để hoạt động
 // ở tên miền riêng, thư mục con và GitHub Pages.
-const CACHE_VERSION = "vpvie-ios-v11";
+const CACHE_VERSION = "vpvie-ios-v12";
 const CORE = [
+  "./pwa.css?v=1.1.7", "./js/tools-table.js?v=1.1.7",
   "./",
   "./index.html",
   "./bang.html",
@@ -48,18 +49,18 @@ const CORE = [
   "./js/tools-science.js",
   "./js/tools-diagram.js",
   "./js/tools-formula.js",
-  "./js/tools-solid.js?v=1.1.6",
+  "./js/tools-solid.js?v=1.1.7",
   "./js/oxyz-math.js",
   "./js/tools-oxyz.js",
   "./js/tools-var.js",
   "./js/tools-ruler.js",
   "./js/tools-export.js",
   "./js/gdrive.js",
-  "./js/ink-recognize.js?v=1.1.6",
-  "./js/app.js?v=1.1.6",
-  "./js/pwa.js?v=1.1.6",
+  "./js/ink-recognize.js?v=1.1.7",
+  "./js/app.js?v=1.1.7",
+  "./js/pwa.js?v=1.1.7",
   "./vendor/katex/katex.min.css",
-  "./style.css?v=1.1.6",
+  "./style.css?v=1.1.7",
   "./icons/icon-32.png",
   "./vendor/pdfjs/pdf.worker.min.js",
   "./vendor/katex/fonts/KaTeX_AMS-Regular.woff2",

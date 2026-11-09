@@ -83,3 +83,11 @@ Service worker dùng bộ nhớ đệm `vpvie-ios-v11`, lấy mã ứng dụng m
 online và dùng bản đã lưu khi offline. Khi có mạng, mở lại PWA để nhận cập nhật;
 không cần xóa dữ liệu website hay cài lại ứng dụng. Kiểm thử nâng cấp bộ nhớ đệm
 và mở lại offline: `node tests/pwa-update-browser.cjs`.
+
+## Bản web 1.1.7
+
+Khung cài PWA được ẩn mặc định và chỉ mở khi chọn Cài ứng dụng; CSS dùng chung
+cho bảng dạy học và các trang văn phòng. Bảng có tiêu đề hàng/cột và tay kéo
+đổi riêng chiều cao hàng, độ rộng cột như bảng tính; kích thước được lưu trong sổ.
+PDF hiển thị vừa toàn trang, không cắt phần dưới. Service worker nâng lên v12
+và lưu sẵn CSS PWA, công cụ bảng mới để tiếp tục dùng ngoại tuyến.

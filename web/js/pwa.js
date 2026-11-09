@@ -35,7 +35,7 @@
     button.setAttribute("aria-label", "Cài VPVie vào màn hình chính");
 
     var panel = document.createElement("div");
-    panel.id = "pwa-install-panel";
+    panel.id = "pwa-install-panel"; panel.hidden = true;
     panel.className = "pwa-install-panel";
     panel.setAttribute("role", "dialog");
     panel.setAttribute("aria-modal", "true");
@@ -47,13 +47,13 @@
         : '<p>Nhấn “Cài đặt” để thêm VPVie vào thiết bị và mở như một ứng dụng độc lập.</p><button class="pwa-install-confirm" type="button">Cài đặt</button>') +
       '</div>';
 
-    function close() { panel.classList.remove("show"); }
+    function close() { panel.classList.remove("show"); panel.hidden = true; }
     button.addEventListener("click", function () {
       if (installPrompt && !isiOS) {
         installPrompt.prompt();
         installPrompt.userChoice.finally(function () { installPrompt = null; button.hidden = true; });
       } else {
-        panel.classList.add("show");
+        panel.hidden = false; panel.classList.add("show");
       }
     });
     panel.addEventListener("click", function (event) { if (event.target === panel) close(); });
@@ -63,6 +63,7 @@
       close();
       if (installPrompt) installPrompt.prompt();
     });
+    document.addEventListener("keydown", function (event) { if (event.key === "Escape") close(); });
     document.body.appendChild(button);
     document.body.appendChild(panel);
   }
