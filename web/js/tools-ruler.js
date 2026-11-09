@@ -14,7 +14,7 @@
       if (e.target.closest(".rl-rot,.rl-size,.rl-close")) return;
       var sx = e.clientX, sy = e.clientY, ox = parseFloat(r.style.left), oy = parseFloat(r.style.top);
       body.setPointerCapture(e.pointerId);
-      function mv(ev) { r.style.left = (ox + ev.clientX - sx) + "px"; r.style.top = (oy + ev.clientY - sy) + "px"; }
+      function mv(ev) { r.style.left = (ox + (ev.clientX - sx) / (global.VPViewport ? global.VPViewport.getState().zoom : 1)) + "px"; r.style.top = (oy + (ev.clientY - sy) / (global.VPViewport ? global.VPViewport.getState().zoom : 1)) + "px"; }
       function up() { body.removeEventListener("pointermove", mv); body.removeEventListener("pointerup", up); }
       body.addEventListener("pointermove", mv); body.addEventListener("pointerup", up);
     });
@@ -31,7 +31,7 @@
     var sz = r.querySelector(".rl-size");
     if (sz && opts && opts.onResize) sz.addEventListener("pointerdown", function (e) {
       e.stopPropagation(); sz.setPointerCapture(e.pointerId); var sx = e.clientX, sy = e.clientY;
-      function mv(ev) { opts.onResize(ev.clientX - sx, ev.clientY - sy); }
+      function mv(ev) { opts.onResize((ev.clientX - sx) / (global.VPViewport ? global.VPViewport.getState().zoom : 1), (ev.clientY - sy) / (global.VPViewport ? global.VPViewport.getState().zoom : 1)); }
       function up() { sz.removeEventListener("pointermove", mv); sz.removeEventListener("pointerup", up); }
       sz.addEventListener("pointermove", mv); sz.addEventListener("pointerup", up);
     });

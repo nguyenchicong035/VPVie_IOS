@@ -1,0 +1,6 @@
+const {chromium}=require('playwright');
+async function prepareLicensedPage() {}
+async function openBoard(p) { await p.waitForFunction(()=>window.__vp&&window.VPLicense?.isActive()); await p.evaluate(()=>window.__vp.closeLibrary()); }
+const {verifyZoom,verifyPinch}=require('./zoom-flows.cjs');
+(async()=>{const b=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium',headless:true,args:['--no-sandbox']});try{const p=await b.newPage({viewport:{width:1365,height:900},hasTouch:true,serviceWorkers:'block'});await prepareLicensedPage(p);await p.goto((process.env.VPVIE_TEST_URL||'http://127.0.0.1:8000')+'/bang.html');await openBoard(p);await verifyZoom(p);await verifyPinch(p,await p.context().newCDPSession(p));await require("./zoom-export-flows.cjs").verifyZoomExport(p);
+const ipad=await b.newPage({viewport:{width:1024,height:768},hasTouch:true,isMobile:true,userAgent:'Mozilla/5.0 (iPad; CPU OS 17_0 like Mac OS X) AppleWebKit/605.1.15 Version/17.0 Mobile/15E148 Safari/604.1',serviceWorkers:'block'});await prepareLicensedPage(ipad);await ipad.goto((process.env.VPVIE_TEST_URL||'http://127.0.0.1:8000')+'/bang.html');await openBoard(ipad);await verifyPinch(ipad,await ipad.context().newCDPSession(ipad));}finally{await b.close()}})().catch(e=>{console.error(e);process.exitCode=1});

@@ -60,7 +60,7 @@
         e.stopPropagation(); e.preventDefault();
         var sx = e.clientX, sy = e.clientY, ox = n.x, oy = n.y, moved = false;
         d.setPointerCapture(e.pointerId);
-        function mv(ev) { n.x = clampX(ox + ev.clientX - sx); n.y = clampY(oy + ev.clientY - sy); moved = true; d.style.left = n.x + "px"; d.style.top = n.y + "px"; relink(); }
+        function mv(ev) { n.x = clampX(ox + (ev.clientX - sx) / (global.VPViewport ? global.VPViewport.getState().zoom : 1)); n.y = clampY(oy + (ev.clientY - sy) / (global.VPViewport ? global.VPViewport.getState().zoom : 1)); moved = true; d.style.left = n.x + "px"; d.style.top = n.y + "px"; relink(); }
         function up() { d.removeEventListener("pointermove", mv); d.removeEventListener("pointerup", up); if (moved) save(); }
         d.addEventListener("pointermove", mv); d.addEventListener("pointerup", up);
       });

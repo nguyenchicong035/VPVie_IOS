@@ -1200,3 +1200,10 @@ table.ov-table td:focus-within { outline: 2px solid var(--teal); outline-offset:
 @media print { .table-headers { display: none !important; } }
 
 .ov.ov-table .ov-bar { top: var(--table-toolbar-top, -64px); }
+
+.page-surface { position: absolute; left: 0; top: 0; transform-origin: top left; background: #fff; }
+#board { touch-action: none; }
+.nr-zoom { display: inline-flex; align-items: center; gap: 3px; }
+.zoom-percent { min-width: 52px; font-variant-numeric: tabular-nums; }
+
+#board.page-zoomed { background: #e9edf2; }

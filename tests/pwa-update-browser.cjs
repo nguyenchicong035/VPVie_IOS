@@ -21,19 +21,19 @@ const path=require('node:path');
   await page.evaluate(async()=>{const r=await navigator.serviceWorker.getRegistration();await r.update();});
   updated=true;
   await page.evaluate(async()=>{const r=await navigator.serviceWorker.getRegistration();await r.update();});
-  await until(async()=>{const keys=await caches.keys();return keys.includes('vpvie-ios-v12')&&!keys.includes('vpvie-ios-v10');});
+  await until(async()=>{const keys=await caches.keys();return keys.includes('vpvie-ios-v13')&&!keys.includes('vpvie-ios-v10');});
   await until(()=>new Promise(resolve=>{
     const channel=new MessageChannel();const timer=setTimeout(()=>resolve(false),300);
-    channel.port1.onmessage=e=>{clearTimeout(timer);resolve(e.data==='vpvie-ios-v12');};
+    channel.port1.onmessage=e=>{clearTimeout(timer);resolve(e.data==='vpvie-ios-v13');};
     navigator.serviceWorker.controller?.postMessage({type:'VERSION'},[channel.port2]);
   }));
   await page.reload();await page.waitForFunction(()=>window.__vp&&window.VPLicense?.isActive());
-  assert.equal(await page.locator('html').getAttribute('data-vpvie-version'),'1.1.7');
+  assert.equal(await page.locator('html').getAttribute('data-vpvie-version'),'1.1.8');
   assert.equal(await page.evaluate(()=>localStorage.getItem('vpvie.update-test')),'preserve my notebooks');
-  const code=await page.evaluate(()=>fetch('js/app.js?v=1.1.7').then(r=>r.text()));assert.ok(code.includes('table-form'));
+  const code=await page.evaluate(()=>fetch('js/app.js?v=1.1.8').then(r=>r.text()));assert.ok(code.includes('table-form'));
   await page.context().setOffline(true);
   await page.reload();await page.waitForFunction(()=>!!window.__vp);
-  assert.equal(await page.locator('html').getAttribute('data-vpvie-version'),'1.1.7');
-  console.log('PASS: v10 cache upgrades to v12 under a Pages subfolder, loads 1.1.7 code, preserves local data and reopens offline.');
+  assert.equal(await page.locator('html').getAttribute('data-vpvie-version'),'1.1.8');
+  console.log('PASS: v10 cache upgrades to v13 under a Pages subfolder, loads 1.1.8 code, preserves local data and reopens offline.');
  }finally{await browser.close();await new Promise(r=>server.close(r));}
 })().catch(e=>{console.error(e);process.exitCode=1});

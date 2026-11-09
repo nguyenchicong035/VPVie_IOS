@@ -2,7 +2,17 @@
 (function (global) {
   "use strict";
   function dl(url, name) { var a = document.createElement("a"); a.href = url; a.download = name; a.click(); }
-  async function snap(el) { return await global.html2canvas(el, { backgroundColor: "#ffffff", scale: 2, logging: false }); }
+  async function snap(el) {
+    var surface = el.querySelector('#page-surface');
+    if (!surface) return await global.html2canvas(el, { backgroundColor: "#ffffff", scale: 2, logging: false });
+    return await global.html2canvas(surface, {
+      backgroundColor: "#ffffff", scale: 2, logging: false, width: surface.offsetWidth, height: surface.offsetHeight,
+      onclone: function (doc) {
+        var page = doc.getElementById('page-surface'); page.style.transform = 'none';
+        page.parentNode.style.overflow = 'visible';
+      }
+    });
+  }
   async function png(el) { var c = await snap(el); dl(c.toDataURL("image/png"), "bang-day-hoc.png"); }
   async function pdf(el) {
     var c = await snap(el);

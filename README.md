@@ -91,3 +91,10 @@ cho bảng dạy học và các trang văn phòng. Bảng có tiêu đề hàng/
 đổi riêng chiều cao hàng, độ rộng cột như bảng tính; kích thước được lưu trong sổ.
 PDF hiển thị vừa toàn trang, không cắt phần dưới. Service worker nâng lên v12
 và lưu sẵn CSS PWA, công cụ bảng mới để tiếp tục dùng ngoại tuyến.
+
+## Thu phóng trang 1.1.8
+
+Chụm/tách hai ngón tay trên bảng để thu nhỏ/phóng to; kéo hai ngón để di chuyển
+vùng đang xem. Trên máy tính có nút −/+, bấm phần trăm để về 100%, Ctrl + cuộn
+chuột và công cụ bàn tay. Thu phóng 25–400% giữ nguyên dữ liệu trang; xuất ảnh,
+PDF và in vẫn lấy toàn bộ trang. Bộ nhớ đệm nâng lên v13.
