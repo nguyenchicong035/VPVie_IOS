@@ -291,7 +291,9 @@ body.theme-dark .sheet-show{background:#23272e;color:#e6e8eb;border-color:#3a3f4
 .ov-table table.ov-table{border-collapse:collapse}
 table.ov-table td{border:1px solid #7a8792;min-width:46px;height:30px;padding:4px 7px;font-size:14px;outline:none}
 .ov-web .ov-body{padding:0;width:420px}
-.ov-webcap{font-size:11px;color:var(--teal);padding:4px 8px;border-bottom:1px solid var(--nrline);background:#f3f6f7;border-radius:9px 9px 0 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ov-webcap{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--teal);padding:4px 8px;border-bottom:1px solid var(--nrline);background:#f3f6f7;border-radius:9px 9px 0 0;white-space:nowrap;overflow:hidden}
+.ov-webopen{flex:0 0 auto;border:1px solid var(--nrline);background:#fff;color:var(--maroon);font-size:11px;font-weight:600;border-radius:6px;padding:2px 8px;cursor:pointer}
+.ov-webopen:hover{background:#fbeef0}
 .ov-web iframe.ov-web{width:420px;height:300px;border:none;display:block;border-radius:0 0 9px 9px}
 
 /* Bảng tuần hoàn + hoá học */

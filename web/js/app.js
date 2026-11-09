@@ -605,6 +605,15 @@
   canvas.addEventListener("pointerleave", function (e) { if (state.drawing && state.tool !== "eraser" && state.tool !== "oxyz") endStroke(); });
 
   // ----- Lớp phủ dạng DỮ LIỆU (lưu/mở theo trang được)
+  // Đổi link YouTube/Vimeo sang dạng nhúng được (iframe); trang khác giữ nguyên.
+  function toEmbedUrl(u) {
+    u = (u || "").trim();
+    var m = u.match(/(?:youtube\.com\/(?:watch\?v=|live\/|shorts\/)|youtu\.be\/)([\w-]{6,})/i);
+    if (m) return "https://www.youtube.com/embed/" + m[1];
+    m = u.match(/vimeo\.com\/(\d+)/i);
+    if (m) return "https://player.vimeo.com/video/" + m[1];
+    return u;
+  }
   function overlayBody(kind, body, data) {
     if (kind === "math") {
       if (data.mode === "text") body.textContent = data.latex || "";
@@ -677,9 +686,16 @@
       body.appendChild(tb);
     }
     else if (kind === "web") {
-      var fr = document.createElement("iframe"); fr.className = "ov-web"; fr.src = data.url; fr.setAttribute("sandbox", "allow-scripts allow-same-origin allow-forms allow-popups");
-      var cap = document.createElement("div"); cap.className = "ov-webcap"; cap.textContent = data.url;
-      body.appendChild(cap); body.appendChild(fr);
+      var embed = toEmbedUrl(data.url);
+      var bar = document.createElement("div"); bar.className = "ov-webcap";
+      var cap = document.createElement("span"); cap.textContent = data.url; cap.style.flex = "1"; cap.style.overflow = "hidden"; cap.style.textOverflow = "ellipsis";
+      var open = document.createElement("button"); open.className = "ov-webopen"; open.textContent = "↗ Mở ngoài"; open.title = "Mở bằng trình duyệt";
+      open.onclick = function (e) { e.stopPropagation(); try { window.open(data.url, "_blank"); } catch (err) {} };
+      bar.appendChild(cap); bar.appendChild(open);
+      var fr = document.createElement("iframe"); fr.className = "ov-web"; fr.src = embed; fr.setAttribute("sandbox", "allow-scripts allow-same-origin allow-forms allow-popups allow-presentation");
+      fr.setAttribute("allow", "autoplay; encrypted-media; picture-in-picture; fullscreen");
+      // Nhiều trang (YouTube, Google, Facebook…) CHẶN nhúng iframe → dùng nút "Mở ngoài".
+      body.appendChild(bar); body.appendChild(fr);
     }
     else if (kind === "note") {
       var host = body.closest(".ov"); host.classList.add("ov-note");

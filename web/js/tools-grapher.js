@@ -156,10 +156,10 @@
     g.save();
     var sx = niceStep(xmax - xmin), sy = niceStep(ymax - ymin);
     var x0 = Math.max(0, Math.min(W, X(0))), y0 = Math.max(0, Math.min(H, Y(0)));
-    // lưới
-    g.strokeStyle = GRID; g.lineWidth = 1; g.beginPath();
-    for (var gx = Math.ceil(xmin / sx) * sx; gx <= xmax; gx += sx) { g.moveTo(X(gx), 0); g.lineTo(X(gx), H); }
-    for (var gy = Math.ceil(ymin / sy) * sy; gy <= ymax; gy += sy) { g.moveTo(0, Y(gy)); g.lineTo(W, Y(gy)); }
+    // Nền trong suốt: thay lưới kín bằng VẠCH CHIA nhỏ trên hai trục (để thấy giấy phía sau).
+    g.strokeStyle = AX; g.lineWidth = 1; g.beginPath();
+    for (var gx = Math.ceil(xmin / sx) * sx; gx <= xmax; gx += sx) { if (Math.abs(gx) < 1e-9) continue; g.moveTo(X(gx), Y(0) - 4); g.lineTo(X(gx), Y(0) + 4); }
+    for (var gy = Math.ceil(ymin / sy) * sy; gy <= ymax; gy += sy) { if (Math.abs(gy) < 1e-9) continue; g.moveTo(X(0) - 4, Y(gy)); g.lineTo(X(0) + 4, Y(gy)); }
     g.stroke();
     // trục
     g.strokeStyle = AX; g.lineWidth = 1.5; g.fillStyle = AX; g.font = "11px 'Segoe UI'";

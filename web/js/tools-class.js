@@ -157,16 +157,22 @@
     spin.onclick = function () {
       var names = namesOf(data); if (names.length < 2) { res.textContent = "(cần ≥2 tên)"; return; }
       if (spinning) return; spinning = true;
+      var TAU = 6.283185307179586;
       var target = Math.floor(Math.random() * names.length);
-      var turns = 6.2832 * (4 + Math.random() * 2);
-      var seg = 6.2832 / names.length;
-      var finalAng = turns + (6.2832 - (target + 0.5) * seg) - 1.5708; // mũi tên ở trên (−90°)
-      var t0 = performance.now(), dur = 3200, start = ang;
+      var seg = TAU / names.length;
+      // Góc tuyệt đối cần đạt để TÂM ô target nằm ngay dưới mũi tên (đỉnh = −π/2).
+      var desired = (-Math.PI / 2) - (target + 0.5) * seg;
+      desired = ((desired % TAU) + TAU) % TAU;
+      var start = ang, cur = ((start % TAU) + TAU) % TAU;
+      var delta = ((desired - cur) % TAU + TAU) % TAU;       // phần quay thêm để canh đúng
+      var fullTurns = TAU * (4 + Math.floor(Math.random() * 3)); // SỐ NGUYÊN vòng (4–6) cho đẹp
+      var finalAng = fullTurns + delta;                       // tổng góc quay thêm từ start
+      var t0 = performance.now(), dur = 3200;
       (function anim(t) {
         var k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3);
         ang = start + finalAng * e; draw(ang);
         if (k < 1) requestAnimationFrame(anim);
-        else { spinning = false; res.textContent = names[target]; res.classList.remove("pop"); void res.offsetWidth; res.classList.add("pop"); }
+        else { ang = start + finalAng; draw(ang); spinning = false; res.textContent = names[target]; res.classList.remove("pop"); void res.offsetWidth; res.classList.add("pop"); }
       })(t0);
     };
     draw(0);

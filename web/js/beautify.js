@@ -56,6 +56,32 @@
     return [x1, y1, x2, y2];
   }
 
+    // Đếm số góc "nhọn" trên một đường khép kín (ổn định hơn chỉ đếm điểm RDP):
+  // lấy các đỉnh RDP rồi tính góc rẽ tại mỗi đỉnh, chỉ đếm đỉnh rẽ đủ gắt.
+  function cornerVerts(pts, size) {
+    var eps = size * 0.12;
+    var v = rdp(pts, eps);
+    // bỏ đỉnh đầu/cuối trùng nhau (nét khép kín)
+    if (v.length > 2 && dist(v[0], v[v.length - 1]) < size * 0.22) v = v.slice(0, -1);
+    if (v.length < 3) return v;
+    // lọc đỉnh rẽ gắt (> ~30°); gộp đỉnh quá gần nhau
+    var out = [];
+    for (var i = 0; i < v.length; i++) {
+      var a = v[(i - 1 + v.length) % v.length], b = v[i], c = v[(i + 1) % v.length];
+      var a1 = Math.atan2(b.y - a.y, b.x - a.x), a2 = Math.atan2(c.y - b.y, c.x - b.x);
+      var turn = Math.abs(a2 - a1); if (turn > Math.PI) turn = 2 * Math.PI - turn;
+      if (turn > 0.52) out.push(b);        // ~30°
+    }
+    // gộp đỉnh gần nhau (< 14% cỡ)
+    var merged = [];
+    for (var j = 0; j < out.length; j++) {
+      if (merged.length && dist(merged[merged.length - 1], out[j]) < size * 0.14) continue;
+      merged.push(out[j]);
+    }
+    if (merged.length > 1 && dist(merged[0], merged[merged.length - 1]) < size * 0.14) merged = merged.slice(0, -1);
+    return merged.length >= 3 ? merged : v;
+  }
+
   // Trả về shape đã làm đẹp, hoặc null nếu nên giữ nguyên nét.
   function beautify(pts) {
     if (!pts || pts.length < 4) return null;
@@ -66,13 +92,15 @@
     if (size < 16) return null;
     const endGap = dist(pts[0], pts[pts.length - 1]);
     const straightness = endGap / L;
-    const closed = endGap < size * 0.4;
+    const closed = endGap < size * 0.3;   // phải khép KÍN mới xét thành hình
 
     // Đường thẳng (nét mở, gần như thẳng)
-    if (!closed && straightness > 0.9) {
+    if (!closed && straightness > 0.82) {
       const [x1, y1, x2, y2] = snapAngle(pts[0].x, pts[0].y, pts[pts.length - 1].x, pts[pts.length - 1].y);
       return { type: "line", x1, y1, x2, y2 };
     }
+    // Nét MỞ, cong (chữ C, cung, sóng…) -> GIỮ NGUYÊN nét tay, KHÔNG ép thành tròn.
+    if (!closed) return null;
 
     // Tâm & bán kính theo hộp bao; độ lệch so với elip (0 = tròn/elip hoàn hảo)
     const cx = (bb.minx + bb.maxx) / 2, cy = (bb.miny + bb.maxy) / 2;
@@ -89,20 +117,24 @@
       return { type: "ellipse", cx, cy, rx, ry };
     }
 
-    // 1) Nét cong & bán kính đều -> ĐƯỜNG TRÒN/ELIP MƯỢT (kể cả khi khép hở một chút)
-    if (straightness < 0.45 && dev < 0.15) return roundShape();
-
-    if (closed) {
-      // 2) Đa giác: xét số đỉnh góc
-      const epsP = size * 0.09;
-      let corners = rdp(pts, epsP);
-      if (corners.length > 1 && dist(corners[0], corners[corners.length - 1]) < size * 0.18) corners = corners.slice(0, -1);
-      const n = corners.length;
-      if (n === 3) return { type: "triangle", pts: corners.map(p => ({ x: p.x, y: p.y })) };
-      if (n === 4) return { type: "rect", x: bb.minx, y: bb.miny, w: bb.w, h: bb.h };
-      // 3) Mặc định vẫn là đường tròn/elip
-      return roundShape();
+    // Hình KHÉP KÍN: đếm số góc để phân loại tam giác / tứ giác / đa giác / tròn.
+    const corners = cornerVerts(pts, size);
+    const n = corners.length;
+    // Tròn/elip rõ: rất ít góc gắt mà bán kính đều
+    if (dev < 0.12 && n >= 7) return roundShape();
+    if (n === 3) return { type: "triangle", pts: corners.map(p => ({ x: p.x, y: p.y })) };
+    if (n === 4) {
+      // Gần chữ nhật thẳng trục -> nắn về chữ nhật bao; lệch trục -> giữ tứ giác.
+      var axisLike = corners.every(function (p) {
+        return Math.min(Math.abs(p.x - bb.minx), Math.abs(p.x - bb.maxx)) < size * 0.18 &&
+               Math.min(Math.abs(p.y - bb.miny), Math.abs(p.y - bb.maxy)) < size * 0.18;
+      });
+      if (axisLike) return { type: "rect", x: bb.minx, y: bb.miny, w: bb.w, h: bb.h };
+      return { type: "poly", pts: corners.map(p => ({ x: p.x, y: p.y })) };
     }
+    if (n === 5 || n === 6) return { type: "poly", pts: corners.map(p => ({ x: p.x, y: p.y })) };
+    // Còn lại: bán kính đều thì tròn/elip, không thì giữ nét.
+    if (dev < 0.2) return roundShape();
     return null;
   }
 
