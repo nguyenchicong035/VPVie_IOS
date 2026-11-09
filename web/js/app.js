@@ -341,7 +341,7 @@
     function sp(p) { p.x = ox + (p.x - ox) * sx; p.y = oy + (p.y - oy) * sy; }
     if (it.type === "stroke" || it.type === "triangle" || it.type === "poly" || it.type === "path") (it.points || it.pts).forEach(sp);
     else if (it.type === "line" || it.type === "arrow") { var a = { x: it.x1, y: it.y1 }, b = { x: it.x2, y: it.y2 }; sp(a); sp(b); it.x1 = a.x; it.y1 = a.y; it.x2 = b.x; it.y2 = b.y; }
-    else if (it.type === "rect") { var tl = { x: it.x, y: it.y }; sp(tl); it.x = tl.x; it.y = tl.y; it.w *= sx; it.h *= sy; if (it.w < 0) { it.x += it.w; it.w = -it.w; } if (it.h < 0) { it.y += it.h; it.h = -it.h; } }
+    else if (it.type === "rect" || it.type === "oxyz") { var tl = { x: it.x, y: it.y }; sp(tl); it.x = tl.x; it.y = tl.y; it.w *= sx; it.h *= sy; if (it.w < 0) { it.x += it.w; it.w = -it.w; } if (it.h < 0) { it.y += it.h; it.h = -it.h; } }
     else if (it.type === "circle") { var c = { x: it.cx, y: it.cy }; sp(c); it.cx = c.x; it.cy = c.y; var f = (Math.abs(sx) + Math.abs(sy)) / 2; if (Math.abs(sx - sy) > 0.03) { it.type = "ellipse"; it.rx = it.r * sx; it.ry = it.r * sy; delete it.r; } else it.r *= f; }
     else if (it.type === "ellipse") { var e = { x: it.cx, y: it.cy }; sp(e); it.cx = e.x; it.cy = e.y; it.rx *= sx; it.ry *= sy; }
     else if (it.type === "solid") {

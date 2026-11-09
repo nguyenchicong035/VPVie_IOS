@@ -1,6 +1,6 @@
 // VPVie PWA service worker. Mọi đường dẫn đều tương đối với scope để hoạt động
 // ở tên miền riêng, thư mục con và GitHub Pages.
-const CACHE_VERSION = "vpvie-ios-v9";
+const CACHE_VERSION = "vpvie-ios-v10";
 const CORE = [
   "./", "./index.html", "./bang.html", "./soanthao.html", "./markdown.html",
   "./htmledit.html", "./bangtinh.html", "./trinhchieu.html", "./pdf.html",

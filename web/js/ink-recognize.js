@@ -115,6 +115,7 @@
     add("/", "op", [L(65, 5, 10, 95)]);
     add("<", "op", [L(70, 10, 12, 48, 70, 86)]);
     add(">", "op", [L(14, 10, 72, 48, 14, 86)]);
+    add("√", "op", [L(6, 54, 18, 48, 34, 88, 56, 10, 94, 10)]);   // căn bậc hai
     // ----- Chữ cái hay gặp trong toán (ưu tiên khi ở chế độ Công thức) -----
     add("x", "var", [L(10, 10, 70, 80), L(70, 10, 10, 80)]);
     add("y", "var", [L(15, 30, 35, 70, 55, 30), L(55, 30, 35, 100, 12, 108)]);
@@ -247,16 +248,19 @@
     var heights = groups.map(function (g) { return g.maxy - g.miny; }).sort(function (a, b) { return a - b; });
     var medH = heights[Math.floor(heights.length / 2)] || 1;
     var baseY = groups.reduce(function (t, g) { return t + g.maxy; }, 0) / groups.length;
-    var syms = [], out = "", latex = "";
+    var syms = [], out = "", latex = "", sqrtDepth = 0;
     for (var i = 0; i < groups.length; i++) {
       var g = groups[i], r = recognizeSymbol(g.strokes, mode);
       var sym = { name: r.name, score: r.score, box: g };
       syms.push(sym); out += r.name;
+      // Căn bậc hai: mở \sqrt{ và bọc các ký hiệu phía sau (người dùng chỉnh lại trong hộp công thức nếu cần)
+      if (r.name === "√") { latex += "\\sqrt{"; sqrtDepth++; continue; }
       // mũ (số nhỏ, nằm cao) -> ^{...}
       var small = (g.maxy - g.miny) < medH * 0.72, high = g.maxy < baseY - medH * 0.3;
-      if (small && high && /[0-9n]/.test(r.name) && latex) latex += "^{" + r.name + "}";
-      else latex += (r.name === "x" ? "\\times " : r.name);
+      if (small && high && /[0-9a-zA-Z]/.test(r.name) && latex && !/[{(]$/.test(latex)) latex += "^{" + r.name + "}";
+      else latex += r.name;   // x giữ là biến (không tự đổi thành dấu nhân)
     }
+    while (sqrtDepth-- > 0) latex += "}";
     return { text: out, latex: latex.trim(), symbols: syms };
   }
 

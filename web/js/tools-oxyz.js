@@ -81,9 +81,21 @@
   }
   function render(ctx, scene, w, h, editor) {
     const d = scene.display,
-      c = scene.camera,
-      L = d.length,
-      scale = Math.min(w / (editor ? 12.5 : 8), h / 8.5) * c.zoom;
+      c = scene.camera;
+    // Tự giãn trục + co tỉ lệ để MỌI đối tượng (kể cả điểm ngoài phạm vi mặc định)
+    // nằm gọn trong khung và trong phạm vi trục tọa độ.
+    let extent = d.length;
+    try {
+      (scene.objects || []).forEach((o) => {
+        [o.p].concat(o.points || []).filter(Boolean).forEach((p) => {
+          if (p && p.length === 3) extent = Math.max(extent, M.norm(p) + (o.r || 0));
+        });
+        if (o.u && o.p) extent = Math.max(extent, M.norm(M.add(o.p, o.u)));
+      });
+    } catch (e) {}
+    const L = Math.max(d.length, extent * 1.05);
+    const span = Math.max(editor ? 12.5 : 8, L * 2.1);
+    const scale = Math.min(w / span, h / (span * 1.0625)) * c.zoom;
     const origin = [
       w * (editor ? 0.35 : 0.5) + c.pan[0] * scale,
       h * 0.5 + c.pan[1] * scale,
@@ -435,17 +447,8 @@
       throw Error("Cần ít nhất hai điểm, mỗi điểm gồm ba tọa độ.");
   }
   function fitObjects() {
-    let extent = scene.display.length;
-    scene.objects.forEach((o) => {
-      for (const p of [o.p, ...(o.points || [])].filter(Boolean))
-        extent = Math.max(extent, M.norm(p) + (o.r || 0));
-      if (o.u && o.p) extent = Math.max(extent, M.norm(M.add(o.p, o.u)));
-    });
-    if (extent > scene.display.length * 1.5)
-      scene.camera.zoom = Math.min(
-        scene.camera.zoom,
-        Math.max(0.2, scene.display.length / extent),
-      );
+    // Việc co giãn để vừa khung do render() tự lo (tự giãn trục + co tỉ lệ),
+    // nên ở đây KHÔNG giảm zoom nữa để tránh thu nhỏ hai lần.
   }
   function append(objs) {
     scene.objects.push(...objs);
